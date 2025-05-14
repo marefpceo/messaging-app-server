@@ -8,7 +8,8 @@
     "serverstart": "nodemon npm run debug-start",
     "prepare": "husky",
     "test": "cross-env NODE_ENV=\"test\" npm run jeststart",
-    "jeststart": "jest test/ --watchAll"
+    "jestAll": "jest test/ --watchAll",
+    "jest": "jest test/ --watch"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
