@@ -1,28 +1,63 @@
 const express = require('express');
 const authRouther = express.Router();
-const authController = require('../controllers/authController');
+const messageController = require('../controllers/messageController');
+const contactController = require('../controllers/contactController');
+const userController = require('../controllers/userController');
+
 const { router } = require('../app');
 
+/********** Message Routing **********/
+/*************************************/
 // GET create message
-router.get('/create_message', authController.create_message_get);
+router.get('message/create_message', messageController.create_message_get);
 
 // POST create message
-router.post('/create_message', authController.create_message_post);
+router.post('message/create_message', messageController.create_message_post);
 
-// GET message list
-router.get('/:user/messages', authController.message_get);
+// GET conversation list
+router.get('message/conversations', messageController.conversation_list_get);
 
-// GET conversation
-router.get('/:user/messages/:contactId', authController.conversation_get);
+// GET selected conversation
+router.get(
+  'message/conversation/:contactId',
+  messageController.conversation_get,
+);
 
-// GET selected message
-router.get('/:user/messages/:message', authController.selected_messaged_get);
+// DELETE conversation
+router.delete(
+  'message/conversation/:contactId',
+  messageController.conversation_delete,
+);
 
+// GET selected conversation message
+router.get(
+  'message/conversation/:contactId/:messageId',
+  messageController.message_get,
+);
+
+// DELETE message
+router.delete(
+  'message/conversation/:contactId/:messageId',
+  messageController.message_delete,
+);
+
+/*********** Contact Routing ***********/
+/***************************************/
+// GET contacts
+router.get('/contact', contactController.contacts_get);
+
+// POST add contact
+router.post('/contact/add', contactController.add_contact_post);
+
+// DELETE contact
+router.delete('/contact/delete', contactController.contact_delete);
+
+/********* User Profile Routing *********/
+/****************************************/
 // GET user profile
-router.get('/:user/edit_profile', authController.edit_profile_get);
+router.get('/:user/edit_profile', userController.edit_profile_get);
 
 // UPDATE edit profile
-router.update('/:user/edit_profile', authController.edit_profile_update);
+router.update('/:user/edit_profile', userController.edit_profile_update);
 
 module.exports = authRouther;
-l;

@@ -7,6 +7,7 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const indexRouter = require('./routes/indexRouter');
+const authRouther = require('./routes/authRouter');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use(['/message', '/contact', '/user'], authRouther);
 
 // Catch 404 errors and forward to error handler
 app.use((req, res, next) => {
