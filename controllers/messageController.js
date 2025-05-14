@@ -18,7 +18,7 @@ exports.conversation_list_get = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.consersation_get = asyncHandler(async (req, res, next) => {
+exports.conversation_get = asyncHandler(async (req, res, next) => {
   res.json({
     message: 'Conversation GET',
   });
