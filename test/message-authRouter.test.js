@@ -32,11 +32,16 @@ describe('GET /message/create_message', () => {
 // Test POST create message
 describe('POST /message/create_message_post', () => {
   test('create message POST route works', (done) => {
-    request(app).post('/message/create_message_post');
+    request(app)
+      .post('/message/create_message_post')
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect({ message: 'Create Message POST' })
+      .expect(200, done);
   });
 });
 
-// Test GET conversation
+// Test GET selected conversation
 describe('GET /message/conversation/:contactId', () => {
   test('get selected conversation GET route works', (done) => {
     request(app)
@@ -45,6 +50,40 @@ describe('GET /message/conversation/:contactId', () => {
       .expect({
         id: 'contact-id-generated',
         message: 'Conversation GET',
-      });
+      })
+      .expect(200, done);
+  });
+});
+
+// Test DELETE conversation
+descibe('DELETE /message/conversation/:contactId', () => {
+  test('delete selected conversation route works', (done) => {
+    request(app)
+      .delete('/message/conversation/:contactId')
+      .expect('Content-Type', /json/)
+      .expect({ message: 'Conversation DELETE' })
+      .expect(200, done);
+  });
+});
+
+// Test GET message
+describe('GET /message/conversation/:contactId/:messageId', () => {
+  test('get selected conversation message route works', (done) => {
+    request(app)
+      .get('/message/conversation/:contactId/:messageId')
+      .expect('Content-Type', /json/)
+      .expect({ message: 'Message GET' })
+      .expect(200, done);
+  });
+});
+
+// Test DELETE message
+describe('DELETE /message/conversation/:contactId/:messageId', () => {
+  test('delete message route works', (done) => {
+    request(app)
+      .delete('/message/conversation/:contactId/:messageId')
+      .expect('Content-Type', /json/)
+      .expect({ message: 'Message DELETE' })
+      .expect(200, done);
   });
 });
