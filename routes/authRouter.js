@@ -8,14 +8,14 @@ const { router } = require('../app');
 
 /********** Message Routing **********/
 /*************************************/
+// GET conversation list
+router.get('message/conversations', messageController.conversation_list_get);
+
 // GET create message
 router.get('message/create_message', messageController.create_message_get);
 
 // POST create message
 router.post('message/create_message', messageController.create_message_post);
-
-// GET conversation list
-router.get('message/conversations', messageController.conversation_list_get);
 
 // GET selected conversation
 router.get(
