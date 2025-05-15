@@ -56,7 +56,7 @@ describe('GET /message/conversation/:contactId', () => {
 });
 
 // Test DELETE conversation
-descibe('DELETE /message/conversation/:contactId', () => {
+describe('DELETE /message/conversation/:contactId', () => {
   test('delete selected conversation route works', (done) => {
     request(app)
       .delete('/message/conversation/:contactId')

@@ -1,5 +1,5 @@
 const express = require('express');
-const authRouther = express.Router();
+const authRouter = express.Router();
 const messageController = require('../controllers/messageController');
 const contactController = require('../controllers/contactController');
 const userController = require('../controllers/userController');
@@ -57,7 +57,7 @@ router.delete('/contact/delete', contactController.contact_delete);
 // GET user profile
 router.get('/:user/edit_profile', userController.edit_profile_get);
 
-// UPDATE edit profile
-router.update('/:user/edit_profile', userController.edit_profile_update);
+// PUT edit profile
+router.put('/:user/edit_profile', userController.edit_profile_put);
 
-module.exports = authRouther;
+module.exports = authRouter;

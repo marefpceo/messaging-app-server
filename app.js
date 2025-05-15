@@ -19,7 +19,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use(['/message', '/contact', '/user'], authRouther);
+app.use(['/message', '/contact', '/user'], (req, res, next) => {
+  authRouther;
+  next();
+});
 
 // Catch 404 errors and forward to error handler
 app.use((req, res, next) => {
