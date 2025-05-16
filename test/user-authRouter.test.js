@@ -5,24 +5,25 @@ const express = require('express');
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
-app.use('/user', authRouter);
+app.use('/auth/user', authRouter);
 
 // Test GET User Profile
-describe('GET /user/:user/edit_profile', () => {
-  test('get user profile route works', (done) => {
-    request(app)
-      .get('/user/:user/edit_profile')
-      .expect('Content-Type', /json/)
-      .expect({ message: 'Edit Profile GET' })
-      .expect(200, done);
+describe('GET /auth/user/:user/edit_profile', () => {
+  it('get user profile route works', async () => {
+    const response = await request(app)
+      .get('/auth/user/:user/edit_profile')
+      .set('Accept', 'application/json');
+    expect(response.headers['Content-Type']).toMatch(/json/);
+    expect(response.status).toEqual(200);
+    expect(response.body.message).toEqual('Edit Profile GET');
   });
 });
 
 // Test PUT edit profile
-describe('PUT /user/:user/edit_profile', () => {
+describe('PUT /auth/user/:user/edit_profile', () => {
   test('put user edit profile rout works', (done) => {
     request(app)
-      .put('/user/:user/edit_profile')
+      .put('/auth/user/:user/edit_profile')
       .send({ message: 'Update profile' })
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
