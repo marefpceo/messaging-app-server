@@ -1,17 +1,17 @@
-const authRouter = require('../routes/authRouter');
+const messageRouter = require('../routes/messageRouter');
 
 const request = require('supertest');
 const express = require('express');
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
-app.use('auth/message', authRouter);
+app.use('/message', messageRouter);
 
 // Test GET Conversation list
-describe('GET /auth/message/conversations', () => {
+describe('GET /conversations', () => {
   test('conversation list route works', (done) => {
     request(app)
-      .get('/auth/message/conversations')
+      .get('/conversations')
       .expect('Content-Type', /json/)
       .expect({ message: 'Conversation List GET' })
       .expect(200, done);
@@ -19,10 +19,10 @@ describe('GET /auth/message/conversations', () => {
 });
 
 // Test GET create message
-describe('GET /auth/message/create_message', () => {
+describe('GET /create_message', () => {
   test('create message GET route works', (done) => {
     request(app)
-      .get('/auth/message/create_message')
+      .get('/create_message')
       .expect('Content-Type', /json/)
       .expect({ message: 'Create Message GET' })
       .expect(200, done);
@@ -30,10 +30,10 @@ describe('GET /auth/message/create_message', () => {
 });
 
 // Test POST create message
-describe('POST /auth/message/create_message_post', () => {
+describe('POST /create_message_post', () => {
   test('create message POST route works', (done) => {
     request(app)
-      .post('/auth/message/create_message_post')
+      .post('/create_message_post')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect({ message: 'Create Message POST' })
@@ -42,10 +42,10 @@ describe('POST /auth/message/create_message_post', () => {
 });
 
 // Test GET selected conversation
-describe('GET /auth/message/conversation/:contactId', () => {
+describe('GET /conversation/:contactId', () => {
   test('get selected conversation GET route works', (done) => {
     request(app)
-      .get('/auth/message/conversation/contact-id-generated')
+      .get('/conversation/contact-id-generated')
       .expect('Content-Type', /json/)
       .expect({
         id: 'contact-id-generated',
@@ -56,10 +56,10 @@ describe('GET /auth/message/conversation/:contactId', () => {
 });
 
 // Test DELETE conversation
-describe('DELETE /auth/message/conversation/:contactId', () => {
+describe('DELETE /conversation/:contactId', () => {
   test('delete selected conversation route works', (done) => {
     request(app)
-      .delete('/auth/message/conversation/:contactId')
+      .delete('/conversation/:contactId')
       .expect('Content-Type', /json/)
       .expect({ message: 'Conversation DELETE' })
       .expect(200, done);
@@ -67,10 +67,10 @@ describe('DELETE /auth/message/conversation/:contactId', () => {
 });
 
 // Test GET message
-describe('GET /auth/message/conversation/:contactId/:messageId', () => {
+describe('GET /conversation/:contactId/:messageId', () => {
   test('get selected conversation message route works', (done) => {
     request(app)
-      .get('/auth/message/conversation/:contactId/:messageId')
+      .get('/conversation/:contactId/:messageId')
       .expect('Content-Type', /json/)
       .expect({ message: 'Message GET' })
       .expect(200, done);
@@ -78,10 +78,10 @@ describe('GET /auth/message/conversation/:contactId/:messageId', () => {
 });
 
 // Test DELETE message
-describe('DELETE /auth/message/conversation/:contactId/:messageId', () => {
+describe('DELETE /conversation/:contactId/:messageId', () => {
   test('delete message route works', (done) => {
     request(app)
-      .delete('/auth/message/conversation/:contactId/:messageId')
+      .delete('/conversation/:contactId/:messageId')
       .expect('Content-Type', /json/)
       .expect({ message: 'Message DELETE' })
       .expect(200, done);
