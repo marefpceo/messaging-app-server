@@ -7,27 +7,8 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use('/', indexRouter);
 
-// Test index route
-describe('GET /', () => {
-  test('index route works', (done) => {
-    request(app)
-      .get('/')
-      .expect('Content-Type', /json/)
-      .expect({ message: 'mCHAT' })
-      .expect(200, done);
-  });
-});
-
-// Test GET and POST signup routes
-describe('GET and POST /signup', () => {
-  test('GET signup route works', (done) => {
-    request(app)
-      .get('/signup')
-      .expect('Content-Type', /json/)
-      .expect({ message: 'signup GET route' })
-      .expect(200, done);
-  });
-
+// Test POST signup routes
+describe('POST /signup', () => {
   test('POST signup router works', (done) => {
     request(app)
       .post('/signup')
@@ -45,16 +26,8 @@ describe('GET and POST /signup', () => {
   });
 });
 
-// Test GET and POST login routes
-describe('GET /login', () => {
-  test('GET login route works', (done) => {
-    request(app)
-      .get('/login')
-      .set('Application', 'application/json')
-      .expect({ message: 'login GET route' })
-      .expect(200, done);
-  });
-
+// Test POST login routes
+describe('POST /login', () => {
   test('POST login router works', (done) => {
     request(app)
       .post('/login')

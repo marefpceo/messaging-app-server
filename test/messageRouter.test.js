@@ -18,17 +18,6 @@ describe('GET /message/conversations', () => {
   });
 });
 
-// Test GET create message
-describe('GET /message/create_message', () => {
-  test('create message GET route works', (done) => {
-    request(app)
-      .get('/message/create_message')
-      .expect('Content-Type', /json/)
-      .expect({ message: 'Create Message GET' })
-      .expect(200, done);
-  });
-});
-
 // Test POST create message
 describe('POST /message/create_message_post', () => {
   test('create message POST route works', (done) => {

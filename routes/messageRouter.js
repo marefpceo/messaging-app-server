@@ -7,9 +7,6 @@ const messageController = require('../controllers/messageController');
 // GET conversation list
 messageRouter.get('/conversations', messageController.conversation_list_get);
 
-// GET create message
-messageRouter.get('/create_message', messageController.create_message_get);
-
 // POST create message
 messageRouter.post('/create_message', messageController.create_message_post);
 
