@@ -33,8 +33,9 @@ describe('GET /message/create_message', () => {
 describe('POST /message/create_message_post', () => {
   test('create message POST route works', (done) => {
     request(app)
-      .post('/message/create_message_post')
+      .post('/message/create_message')
       .set('Accept', 'application/json')
+      .send({ message: 'test' })
       .expect('Content-Type', /json/)
       .expect({ message: 'Create Message POST' })
       .expect(200, done);

@@ -7,9 +7,11 @@ exports.contacts_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.add_contact_post = asyncHandler(async (req, res, next) => {
-  res.json({
-    message: 'Add Contact POST',
-  });
+  const testResponse = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+  res.json(testResponse);
 });
 
 exports.contact_delete = asyncHandler(async (req, res, next) => {
