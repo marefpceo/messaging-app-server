@@ -1,29 +1,51 @@
 const indexRouter = require('../routes/indexRouter');
+const { PrismaClient } = require('../generated/prisma');
+const prisma = new PrismaClient();
 
 const request = require('supertest');
 const express = require('express');
-const app = express();
+const app = require('../app');
 
 app.use(express.urlencoded({ extended: false }));
 app.use('/', indexRouter);
 
 // Test POST signup routes
-describe('POST /signup', () => {
-  test('POST signup router works', (done) => {
-    request(app)
-      .post('/signup')
-      .send({
-        first_name: 'Fname',
-        last_name: 'Lname',
-        dob: '2025-5-13',
+describe('Test signup route to create a new user', () => {
+  afterAll(async () => {
+    await prisma.user.delete({
+      where: {
         email: 'flname@test.com',
-        username: 'flname',
-        password: 'kkkkkkkkk',
-      })
-      .set('Accept', 'application/json')
-      .expect({ message: 'signup POST route' })
-      .expect(200, done);
+      },
+    });
   });
+  // Test create new user
+  test('POST signup route and create new user', async () => {
+    const testUser = {
+      firstname: 'Fnametest',
+      lastname: 'Lnametest',
+      date_of_birth: '2025-05-13',
+      email: 'flname@test.com',
+      password: 'kkkkkkkkk',
+    };
+    const response = await request(app)
+      .post('/signup')
+      .send(testUser)
+      .set('Accept', 'x-www-form-urlencoded');
+
+    expect(response.status).toEqual(200);
+    expect(response.body).toEqual({
+      id: expect.anything(Number),
+      firstname: 'Fnametest',
+      lastname: 'Lnametest',
+      date_of_birth: expect.anything(Date),
+      email: 'flname@test.com',
+      password: 'kkkkkkkkk',
+      createdAt: expect.anything(Date),
+      updatedAt: expect.anything(Date),
+    });
+  });
+
+  // Test create new user duplicate email
 });
 
 // Test POST login routes
