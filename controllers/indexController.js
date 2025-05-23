@@ -26,6 +26,17 @@ exports.signup_post = [
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
+    const emailCheck = await prisma.user.findFirst({
+      where: {
+        email: req.body.email,
+      },
+    });
+    if (emailCheck) {
+      res.json({
+        message: 'Email already in use',
+      });
+      return;
+    }
 
     if (!errors.isEmpty()) {
       res.json({

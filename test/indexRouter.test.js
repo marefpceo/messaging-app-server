@@ -58,8 +58,8 @@ describe('Test signup route to create a new user', () => {
       .post('/signup')
       .send(testUser)
       .set('Accept', 'x-www-form-urlencoded');
-
-    expect(response.body).toEqual('Email already in use');
+    // expect(response.status).toBe(400);
+    expect(response.body.message).toEqual('Email already in use');
   });
 });
 
