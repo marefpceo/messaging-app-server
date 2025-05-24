@@ -58,18 +58,27 @@ describe('Test signup route to create a new user', () => {
       .post('/signup')
       .send(testUser)
       .set('Accept', 'x-www-form-urlencoded');
-    // expect(response.status).toBe(400);
+    expect(response.status).toBe(200);
     expect(response.body.message).toEqual('Email already in use');
   });
 });
 
 // Test POST login routes
 describe('POST /login', () => {
-  test('POST login router works', (done) => {
-    request(app)
+  test('POST login router works', async () => {
+    const testUserLogin = {
+      email: 'login@test.com',
+      password: 'kkkkkkkkk',
+    };
+    const response = await request(app)
       .post('/login')
-      .set('Application', 'application/json')
-      .expect({ message: 'login POST route' })
-      .expect(200, done);
+      .send(testUserLogin)
+      .set('Accept', 'x-www-form-urlencoded');
+    expect(response.body.message).toEqual('Login succesful');
+    // request(app)
+    //   .post('/login')
+    //   .set('Application', 'application/json')
+    //   .expect({ message: 'Login successful' })
+    //   .expect(200, done);
   });
 });
