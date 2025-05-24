@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
 
+// Handles creating new user signup
 exports.signup_post = [
   body('firstname')
     .trim()
@@ -17,7 +18,21 @@ exports.signup_post = [
     .withMessage('Only alphanumeric characters allowed')
     .escape(),
   body('date_of_birth').trim().isDate({ format: 'YYYY-MM-DD' }),
-  body('email').trim().isEmail().escape(),
+  body('email')
+    .trim()
+    .isEmail()
+    .escape()
+    .custom(async (value) => {
+      const emailCheck = await prisma.user.findUnique({
+        where: {
+          email: value,
+        },
+      });
+      if (emailCheck) {
+        throw new Error('Email already in use');
+      }
+    })
+    .withMessage('Email already in use'),
   body('password')
     .trim()
     .isLength({ min: 9 })
@@ -26,21 +41,10 @@ exports.signup_post = [
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
-    const emailCheck = await prisma.user.findFirst({
-      where: {
-        email: req.body.email,
-      },
-    });
-    if (emailCheck) {
-      res.json({
-        message: 'Email already in use',
-      });
-      return;
-    }
 
     if (!errors.isEmpty()) {
-      res.json({
-        errors: errors.array(),
+      res.status(200).json({
+        errors: errors.mapped(),
       });
       return;
     } else {
