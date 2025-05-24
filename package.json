@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
+    "argon2": "^0.43.0",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
@@ -19,7 +20,9 @@
     "express-async-handler": "^1.2.0",
     "express-validator": "^7.2.1",
     "morgan": "~1.9.1",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.27.1",
