@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
+const argon2 = require('argon2');
 
 // Handles creating new user signup
 exports.signup_post = [
@@ -48,13 +49,19 @@ exports.signup_post = [
       });
       return;
     } else {
+      const hash = await argon2.hash(req.body.password, {
+        type: argon2.argon2id,
+        memoryCost: 47104,
+        timeCost: 1,
+        parallelism: 1,
+      });
       const newUser = await prisma.user.create({
         data: {
           firstname: req.body.firstname,
           lastname: req.body.lastname,
           date_of_birth: Date(req.body.date_of_birth),
           email: req.body.email,
-          password: req.body.password,
+          password: hash,
         },
       });
       res.json(newUser);

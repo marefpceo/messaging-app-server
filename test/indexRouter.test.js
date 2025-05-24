@@ -1,6 +1,7 @@
 const indexRouter = require('../routes/indexRouter');
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
+const argon2 = require('argon2');
 
 const request = require('supertest');
 const express = require('express');
@@ -27,11 +28,18 @@ describe('Test signup route to create a new user', () => {
       email: 'flname@test.com',
       password: 'kkkkkkkkk',
     };
+
     const response = await request(app)
       .post('/signup')
       .send(testUser)
       .set('Accept', 'x-www-form-urlencoded');
 
+    const verifiedHash = await argon2.verify(
+      response.body.password,
+      testUser.password,
+    );
+
+    expect(verifiedHash).toBeTruthy;
     expect(response.status).toEqual(200);
     expect(response.body).toEqual({
       id: expect.anything(Number),
@@ -39,7 +47,7 @@ describe('Test signup route to create a new user', () => {
       lastname: 'Lnametest',
       date_of_birth: expect.anything(Date),
       email: 'flname@test.com',
-      password: 'kkkkkkkkk',
+      password: expect.any(String),
       createdAt: expect.anything(Date),
       updatedAt: expect.anything(Date),
     });
@@ -67,7 +75,7 @@ describe('Test signup route to create a new user', () => {
 describe('POST /login', () => {
   test('POST login router works', async () => {
     const testUserLogin = {
-      email: 'login@test.com',
+      email: 'flname@test.com',
       password: 'kkkkkkkkk',
     };
     const response = await request(app)
@@ -75,10 +83,5 @@ describe('POST /login', () => {
       .send(testUserLogin)
       .set('Accept', 'x-www-form-urlencoded');
     expect(response.body.message).toEqual('Login succesful');
-    // request(app)
-    //   .post('/login')
-    //   .set('Application', 'application/json')
-    //   .expect({ message: 'Login successful' })
-    //   .expect(200, done);
   });
 });
