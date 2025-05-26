@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 const expressSession = require('express-session');
+const passport = require('passport');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const { PrismaClient } = require('./generated/prisma');
 
@@ -15,6 +16,13 @@ const userRouter = require('./routes/userRouter');
 const contactRouter = require('./routes/contactRouter');
 
 const app = express();
+
+// app.use(cors);
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
   expressSession({
@@ -32,12 +40,7 @@ app.use(
   }),
 );
 
-// app.use(cors);
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.authenticate('session'));
 
 app.use('/', indexRouter);
 app.use('/message', messageRouter);

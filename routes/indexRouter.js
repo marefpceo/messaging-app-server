@@ -45,25 +45,37 @@ passport.use(
   ),
 );
 
-// POST sign up page
-router.post('/signup', indexController.signup_post);
-
-// POST login
-router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.status(200).json({ message: info.message });
-    }
-    req.login(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-      return res.json({ message: 'Login successful' });
+passport.serializeUser((user, cb) => {
+  process.nextTick(() => {
+    cb(null, {
+      id: user.id,
+      username: user.username,
     });
   });
 });
+
+passport.deserializeUser((user, cb) => {
+  process.nextTick(() => {
+    return cb(null, user);
+  });
+});
+
+// POST sign up page
+router.post('/signup', indexController.signup_post);
+
+// POST login - Returns a status of 401 upon failure
+router.post(
+  '/login',
+  passport.authenticate('local', {
+    failWithError: true,
+    successMessage: true,
+    failureMessage: true,
+  }),
+  (req, res) => {
+    res.json({
+      message: 'Login successful',
+    });
+  },
+);
 
 module.exports = router;

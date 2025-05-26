@@ -70,16 +70,32 @@ describe('Test signup route to create a new user', () => {
     expect(response.body.errors.email.msg).toEqual('Email already in use');
   });
 
+  const testUserLogin = {
+    email: 'flname@test.com',
+    password: 'kkkkkkkkk',
+  };
   // Test POST login routes
-  test('POST login router works', async () => {
-    const testUserLogin = {
-      email: 'flname@test.com',
-      password: 'kkkkkkkkk',
-    };
+  test('POST login succesful', async () => {
     const response = await request(app)
       .post('/login')
-      .send(testUserLogin)
+      .send({ email: testUserLogin.email, password: testUserLogin.password })
       .set('Accept', 'x-www-form-urlencoded');
     expect(response.body.message).toEqual('Login successful');
+  });
+
+  test('POST login incorrect password', async () => {
+    const response = await request(app)
+      .post('/login')
+      .send({ email: testUserLogin.email, password: 'incorrctPassword' })
+      .set('Accept', 'x-www-form-urlencoded');
+    expect(response.status).toBe(401);
+  });
+
+  test('POST login incorrct email', async () => {
+    const response = await request(app)
+      .post('/login')
+      .send({ email: 'incorrect@email.com', password: testUserLogin.password })
+      .set('Accept', 'x-www-form-urlencoded');
+    expect(response.status).toBe(401);
   });
 });
