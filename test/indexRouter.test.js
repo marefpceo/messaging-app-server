@@ -69,10 +69,8 @@ describe('Test signup route to create a new user', () => {
     expect(response.status).toBe(200);
     expect(response.body.errors.email.msg).toEqual('Email already in use');
   });
-});
 
-// Test POST login routes
-describe('POST /login', () => {
+  // Test POST login routes
   test('POST login router works', async () => {
     const testUserLogin = {
       email: 'flname@test.com',
@@ -82,6 +80,6 @@ describe('POST /login', () => {
       .post('/login')
       .send(testUserLogin)
       .set('Accept', 'x-www-form-urlencoded');
-    expect(response.body.message).toEqual('Login succesful');
+    expect(response.body.message).toEqual('Login successful');
   });
 });
