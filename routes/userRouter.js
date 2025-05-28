@@ -5,9 +5,9 @@ const userController = require('../controllers/userController');
 /********* User Profile Routing *********/
 /****************************************/
 // GET user profile
-userRouter.get('/:user/edit_profile', userController.edit_profile_get);
+userRouter.get('/:userId/edit_profile', userController.edit_profile_get);
 
 // PUT edit profile
-userRouter.put('/:user/edit_profile', userController.edit_profile_put);
+userRouter.put('/:userId/edit_profile', userController.edit_profile_put);
 
 module.exports = userRouter;
