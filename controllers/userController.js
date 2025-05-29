@@ -41,9 +41,22 @@ exports.edit_profile_put = [
       });
       return;
     } else {
-      const updatedProfile = await prisma.user.update({
+      const checkUser = await prisma.user.findUnique({
         where: {
           id: parseInt(req.params.userId),
+        },
+      });
+
+      if (!checkUser) {
+        res.status(404).json({
+          message: 'User not found',
+        });
+        return;
+      }
+
+      const updatedProfile = await prisma.user.update({
+        where: {
+          email: checkUser.email,
         },
         data: {
           profile: {
@@ -51,9 +64,9 @@ exports.edit_profile_put = [
               bio: req.body.bio,
               settings: {
                 update: {
-                  background: req.body,
-                  font: req.body,
-                  color: req.body,
+                  background: req.body.background,
+                  font: req.body.font,
+                  color: req.body.color,
                 },
               },
             },

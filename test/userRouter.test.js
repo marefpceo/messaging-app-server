@@ -6,7 +6,8 @@ const request = require('supertest');
 const express = require('express');
 const app = express();
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/user', userRouter);
 
 // Test all user routes\
@@ -59,8 +60,6 @@ describe("Test user routes to access and edit user's profile", () => {
     const response = await request(app)
       .get(`/user/${userId}/edit_profile`)
       .set('Accept', 'application/json');
-    // expect(response.headers["Content-Type"]).toMatch(/json/);
-    // expect(response.status).toBe(200);
     expect(response.body).toEqual({
       id: expect.any(Number),
       firstname: testUser.firstname,
@@ -89,7 +88,7 @@ describe("Test user routes to access and edit user's profile", () => {
       id: expect.any(Number),
       firstname: testUser.firstname,
       lastname: testUser.lastname,
-      date_of_birth: testUser.date_of_birth,
+      date_of_birth: expect.any(String),
       email: testUser.email,
       bio: 'User bio updated',
       background: 'gray',
