@@ -29,43 +29,62 @@ exports.edit_profile_get = asyncHandler(async (req, res, next) => {
   });
 });
 
-// exports.edit_profile_put = [
-//   body('bio')
-//     .trim()
-//     .isLength({ max: 520 })
-//     .escape(),
+exports.edit_profile_put = [
+  body('bio').trim().isLength({ max: 520 }).escape(),
 
-//   asyncHandler(async (req, res, next) => {
-//     const errors =  validationResult(req);
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
 
-//     if (!errors.isEmpty()) {
-//       return res.status(200).json({
-//         errors: errors.mapped(),
-//       });
-//     } else {
-//       const updatedProfile = await prisma.user.update({
-//         where: {
-//           id: parseInt(req.params.userId)
-//         }, data: {
-//           profile: {
-//             data: {
-//               bio: req.body.bio,
-//             },
-//             data: {
-//               s
-//             }
-//           }
-//           ////////////////////////////////////
-//           ///////////////////////////////////
-//           ////////////////////////////////////
-//           // background: req.body.background,
-//           font: req.body.font,
-//           color: req.body.color
-//         }
-//       });
-//       res.json({
-//         updatedProfile
-//       })
-//     }
-//   })
-// ];
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        errors: errors.mapped(),
+      });
+      return;
+    } else {
+      const updatedProfile = await prisma.user.update({
+        where: {
+          id: parseInt(req.params.userId),
+        },
+        data: {
+          profile: {
+            update: {
+              bio: req.body.bio,
+              settings: {
+                update: {
+                  background: req.body,
+                  font: req.body,
+                  color: req.body,
+                },
+              },
+            },
+          },
+        },
+        include: {
+          profile: {
+            select: {
+              bio: true,
+              settings: {
+                select: {
+                  background: true,
+                  font: true,
+                  color: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      res.json({
+        id: updatedProfile.id,
+        firstname: updatedProfile.firstname,
+        lastname: updatedProfile.lastname,
+        date_of_birth: updatedProfile.date_of_birth,
+        email: updatedProfile.email,
+        bio: updatedProfile.profile.bio,
+        background: updatedProfile.profile.settings.background,
+        font: updatedProfile.profile.settings.font,
+        color: updatedProfile.profile.settings.color,
+      });
+    }
+  }),
+];
