@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   expressSession({
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 1 * 1 * 10 * 60 * 1000,
     },
     secret: process.env.SESSION_SECRET,
     resave: true,
@@ -55,13 +55,20 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(err.status || 500);
-  res.json({
-    error: {
-      status: err.status || 500,
-      message: err.message,
-    },
-  });
+  // Catch prisma 'record not found' returns as 404
+  if (err.code === 'P2025') {
+    res.status(404).json({
+      message: 'User not found',
+    });
+  } else {
+    res.status(err.status || 500);
+    res.json({
+      error: {
+        status: err.status || 500,
+        message: err.message,
+      },
+    });
+  }
 });
 
 module.exports = app;
