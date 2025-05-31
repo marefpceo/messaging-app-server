@@ -101,3 +101,26 @@ exports.edit_profile_put = [
     }
   }),
 ];
+
+exports.edit_profile_delete = asyncHandler(async (req, res, next) => {
+  const findUser = await prisma.user.findFirst({
+    where: {
+      id: parseInt(req.params.userId),
+    },
+  });
+
+  if (findUser === null) {
+    res.status(404).json({
+      message: 'User not found',
+    });
+  } else {
+    await prisma.user.delete({
+      where: {
+        id: parseInt(findUser.id),
+      },
+    });
+    res.status(200).json({
+      message: `User ${findUser.firstname} ${findUser.lastname} marked for deletion`,
+    });
+  }
+});

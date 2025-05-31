@@ -10,4 +10,7 @@ userRouter.get('/:userId/edit_profile', userController.edit_profile_get);
 // PUT edit profile
 userRouter.put('/:userId/edit_profile', userController.edit_profile_put);
 
+// DELETE user profile
+userRouter.delete('/:userId/edit_profile', userController.edit_profile_delete);
+
 module.exports = userRouter;

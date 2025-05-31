@@ -47,14 +47,6 @@ describe("Test user routes to access and edit user's profile", () => {
     userId = user.id;
   });
 
-  afterAll(async () => {
-    await prisma.user.delete({
-      where: {
-        email: 'UserRouter@test.com',
-      },
-    });
-  });
-
   // Test GET user profile
   it('GET user profile route works', async () => {
     const response = await request(app)
@@ -95,5 +87,34 @@ describe("Test user routes to access and edit user's profile", () => {
       font: 'normal',
       color: 'black',
     });
+  });
+
+  // Test DELETE route to delete user profile
+  test('DELETE user profile route works', async () => {
+    const response = await request(app)
+      .delete(`/user/${userId}/edit_profile`)
+      .set('Content-Type', 'application/json');
+    expect(response.body.message).toBe(
+      `User ${testUser.firstname} ${testUser.lastname} marked for deletion`,
+    );
+  });
+
+  // Test DELETE route with non-existent user
+  test('DELETE user profile with non-existent user returns error', async () => {
+    const response = await request(app)
+      .delete(`/user/${userId}/edit_profile`)
+      .set('Content-Type', 'application/json');
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe('User not found');
+  });
+
+  // Verify user has been deleted
+  test('Verify testUser is deleted', async () => {
+    const response = await prisma.user.findUnique({
+      where: {
+        id: parseInt(userId),
+      },
+    });
+    expect(response).toBeNull();
   });
 });
