@@ -7,7 +7,11 @@
     "debug-start": "DEBUG=server:* npm start",
     "serverstart": "nodemon npm run debug-start",
     "prepare": "husky",
-    "test": "cross-env NODE_ENV=\"test\" jest test/ --verbose"
+    "test": "cross-env NODE_ENV=\"test\" jest test/ --verbose",
+    "dbseed": "npx prisma db seed"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
