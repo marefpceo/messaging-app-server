@@ -12,16 +12,17 @@ model User {
   id              Int           @id @default(autoincrement())
   firstname       String    
   lastname        String    
-  date_of_birth   String  
+  date_of_birth   DateTime  
   email           String        @unique
   password        String        
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  profile         Profile?      
+  profile         Profile       @relation(fields: [profileId], references: [id])
+  profileId       Int           @unique      
   recipient       Message[]     @relation("recipient")
   sender          Message[]     @relation("sender")
-  userId          Contact[]    @relation("userId")
-  contactUserId   Contact[]    @relation("contactUserId")
+  userId          Contact[]     @relation("userId")
+  contactUserId   Contact[]     @relation("contactUserId")
 }
 
 model Contact {
@@ -34,19 +35,18 @@ model Contact {
 
 model Profile {
   id              Int           @id @default(autoincrement())
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId          Int           @unique
-  bio             String
-  settings        Settings?
+  user            User?
+  bio             String        @default("New mChat User")
+  settings        Settings      @relation(fields: [settingsId], references: [id])
+  settingsId      Int           @unique
 }
 
 model Settings {
   id              Int           @id @default(autoincrement())
-  profile         Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId       Int           @unique
-  background      String
-  font            String
-  color           String
+  profile         Profile?
+  background      String        @default("white")
+  font            String        @default("normal")
+  color           String        @default("black")
 }
 
 model Message {

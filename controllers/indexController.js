@@ -59,9 +59,16 @@ exports.signup_post = [
         data: {
           firstname: req.body.firstname,
           lastname: req.body.lastname,
-          date_of_birth: Date(req.body.date_of_birth),
+          date_of_birth: new Date(req.body.date_of_birth),
           email: req.body.email,
           password: hash,
+          profile: {
+            create: {
+              settings: {
+                create: {},
+              },
+            },
+          },
         },
       });
       res.json(newUser);

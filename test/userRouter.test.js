@@ -16,7 +16,7 @@ describe("Test user routes to access and edit user's profile", () => {
   const testUser = {
     firstname: 'User',
     lastname: 'Router',
-    date_of_birth: '2025-05-26',
+    date_of_birth: new Date('2025-05-26'),
     email: 'UserRouter@test.com',
     password: 'kkkkkkkkk',
   };
@@ -27,7 +27,7 @@ describe("Test user routes to access and edit user's profile", () => {
       data: {
         firstname: 'User',
         lastname: 'Router',
-        date_of_birth: '2025-05-26',
+        date_of_birth: new Date('2025-05-26'),
         email: 'UserRouter@test.com',
         password: 'kkkkkkkkk',
         profile: {
@@ -56,7 +56,7 @@ describe("Test user routes to access and edit user's profile", () => {
       id: expect.any(Number),
       firstname: testUser.firstname,
       lastname: testUser.lastname,
-      date_of_birth: testUser.date_of_birth,
+      date_of_birth: testUser.date_of_birth.toISOString(),
       email: testUser.email,
       bio: 'User bio with info about them for public display',
       background: 'black',
@@ -80,7 +80,7 @@ describe("Test user routes to access and edit user's profile", () => {
       id: expect.any(Number),
       firstname: testUser.firstname,
       lastname: testUser.lastname,
-      date_of_birth: expect.any(String),
+      date_of_birth: testUser.date_of_birth.toISOString(),
       email: testUser.email,
       bio: 'User bio updated',
       background: 'gray',

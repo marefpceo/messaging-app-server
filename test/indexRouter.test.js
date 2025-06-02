@@ -50,6 +50,7 @@ describe('Test signup route to create a new user', () => {
       password: expect.any(String),
       createdAt: expect.anything(Date),
       updatedAt: expect.anything(Date),
+      profileId: expect.anything(Number),
     });
   });
 

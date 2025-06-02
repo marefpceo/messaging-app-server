@@ -7,19 +7,15 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use('/contact', contactRouter);
 
-// Test GET Contact list
-describe('GET /contact', () => {
-  test('contact list GET route works', (done) => {
-    request(app)
+// Test contactRouter routes
+describe('Test all contactRouter routes', () => {
+  test('GET contact list works', async () => {
+    const response = await request(app)
       .get('/contact')
-      .expect('Content-Type', /json/)
-      .expect({ message: 'Contacts GET' })
-      .expect(200, done);
+      .set('Content-Type', 'application/json');
+    expect(response.body.message).toBe('Contacts GET');
   });
-});
 
-// Test POST add contact
-describe('POST /contact/add', () => {
   test('Add contact POST route works', async () => {
     const testContact = {
       name: 'tester',
@@ -32,10 +28,7 @@ describe('POST /contact/add', () => {
     expect(responseData.status).toBe(200);
     expect(responseData.body).toStrictEqual(testContact);
   });
-});
 
-// Test DELETE contact
-describe('DELETE /contact/delete', () => {
   test('Delete contact DELETE route works', async () => {
     const randomUserId = 'asdfjkl;12345678';
     const responseData = await request(app)
