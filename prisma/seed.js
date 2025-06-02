@@ -10,6 +10,7 @@ async function main() {
     create: {
       firstname: 'User',
       lastname: 'One',
+      username: 'userOne',
       date_of_birth: new Date('1985-10-5'),
       email: 'userOne@test.com',
       password: 'kkkkkkkkkk',
@@ -41,6 +42,7 @@ async function main() {
     create: {
       firstname: 'User',
       lastname: 'Two',
+      username: 'userTwo',
       date_of_birth: new Date('1978-5-20'),
       email: 'userTwo@test.com',
       password: 'kkkkkkkkkk',
@@ -67,6 +69,7 @@ async function main() {
     create: {
       firstname: 'Mr',
       lastname: 'Three',
+      username: 'userThree',
       date_of_birth: new Date('2000-2-3'),
       email: 'userThree@test.com',
       password: 'kkkkkkkkkk',
@@ -93,6 +96,7 @@ async function main() {
     create: {
       firstname: 'UMan',
       lastname: 'Four',
+      username: 'userFour',
       date_of_birth: new Date('1985-7-31'),
       email: 'user@Four.com',
       password: 'kkkkkkkkkk',
@@ -119,6 +123,7 @@ async function main() {
     create: {
       firstname: 'Fifth',
       lastname: 'User',
+      username: 'userFive',
       date_of_birth: new Date('1965-11-13'),
       email: 'u5Five@me.com',
       password: 'kkkkkkkkkk',
