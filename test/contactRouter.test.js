@@ -2,6 +2,7 @@ const contactRouter = require('../routes/contactRouter');
 
 const request = require('supertest');
 const express = require('express');
+const { anyObject } = require('jest-mock-extended');
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
@@ -13,7 +14,19 @@ describe('Test all contactRouter routes', () => {
     const response = await request(app)
       .get('/contact')
       .set('Content-Type', 'application/json');
-    expect(response.body.message).toBe('Contacts GET');
+    expect(response.body).toContain(
+      expect.objectContaining({
+        firstname: expect.any(String),
+        lastname: expect.any(String),
+        date_of_birth: expect.any(String),
+        username: expect.any(String),
+        email: expect.any(String),
+        profile: {
+          bio: expect.any(String),
+          settings: expect.any(Object),
+        },
+      }),
+    );
   });
 
   test('Add contact POST route works', async () => {

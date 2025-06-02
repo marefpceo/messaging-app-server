@@ -24,6 +24,7 @@ describe('Test signup route to create a new user', () => {
     const testUser = {
       firstname: 'Fnametest',
       lastname: 'Lnametest',
+      username: 'flname12',
       date_of_birth: '2025-05-13',
       email: 'flname@test.com',
       password: 'kkkkkkkkk',
@@ -45,6 +46,7 @@ describe('Test signup route to create a new user', () => {
       id: expect.anything(Number),
       firstname: 'Fnametest',
       lastname: 'Lnametest',
+      username: 'flname12',
       date_of_birth: expect.anything(Date),
       email: 'flname@test.com',
       password: expect.any(String),
@@ -58,6 +60,7 @@ describe('Test signup route to create a new user', () => {
     const testUser = {
       firstname: 'Fnametest',
       lastname: 'Lnametest',
+      username: 'flname12',
       date_of_birth: '2025-05-13',
       email: 'flname@test.com',
       password: 'kkkkkkkkk',

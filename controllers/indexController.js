@@ -18,6 +18,11 @@ exports.signup_post = [
     .isAlphanumeric()
     .withMessage('Only alphanumeric characters allowed')
     .escape(),
+  body('username')
+    .trim()
+    .isLength({ min: 8, max: 64 })
+    .withMessage('Username must be at least 8 characters')
+    .escape(),
   body('date_of_birth').trim().isDate({ format: 'YYYY-MM-DD' }),
   body('email')
     .trim()
@@ -59,6 +64,7 @@ exports.signup_post = [
         data: {
           firstname: req.body.firstname,
           lastname: req.body.lastname,
+          username: req.body.username,
           date_of_birth: new Date(req.body.date_of_birth),
           email: req.body.email,
           password: hash,
