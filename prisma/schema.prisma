@@ -17,8 +17,7 @@ model User {
   password        String        
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  profile         Profile       @relation(fields: [profileId], references: [id])
-  profileId       Int           @unique      
+  profile         Profile?       
   recipient       Message[]     @relation("recipient")
   sender          Message[]     @relation("sender")
   userId          Contact[]     @relation("userId")
@@ -35,15 +34,16 @@ model Contact {
 
 model Profile {
   id              Int           @id @default(autoincrement())
-  user            User?
+  user            User          @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId          Int           @unique
   bio             String        @default("New mChat User")
-  settings        Settings      @relation(fields: [settingsId], references: [id])
-  settingsId      Int           @unique
+  settings        Settings?      
 }
 
 model Settings {
   id              Int           @id @default(autoincrement())
-  profile         Profile?
+  profile         Profile?      @relation(fields: [profileId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  profileId       Int           @unique
   background      String        @default("white")
   font            String        @default("normal")
   color           String        @default("black")
