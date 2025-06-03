@@ -11,13 +11,12 @@ app.use('/contact', contactRouter);
 
 // Test contactRouter routes
 describe('Test all contactRouter routes', () => {
-  let contactsAdded = false;
   test('GET contact list works', async () => {
     const response = await request(app)
       .get('/contact')
       .set('Content-Type', 'application/json');
-    expect(response.body).toContain(
-      expect.objectContaining({
+    response.body.forEach((item) => {
+      expect(item).toMatchObject({
         firstname: expect.any(String),
         lastname: expect.any(String),
         date_of_birth: expect.any(String),
@@ -27,8 +26,8 @@ describe('Test all contactRouter routes', () => {
           bio: expect.any(String),
           settings: expect.any(Object),
         },
-      }),
-    );
+      });
+    });
   });
 
   test(`POST route to add contact 'userThree' to 'userOne1' works`, async () => {
