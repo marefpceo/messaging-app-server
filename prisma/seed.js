@@ -10,7 +10,7 @@ async function main() {
     create: {
       firstname: 'User',
       lastname: 'One',
-      username: 'userOne',
+      username: 'userOne1',
       date_of_birth: new Date('1985-10-5'),
       email: 'userOne@test.com',
       password: 'kkkkkkkkkk',
@@ -42,7 +42,7 @@ async function main() {
     create: {
       firstname: 'User',
       lastname: 'Two',
-      username: 'userTwo',
+      username: 'userTwo2',
       date_of_birth: new Date('1978-5-20'),
       email: 'userTwo@test.com',
       password: 'kkkkkkkkkk',

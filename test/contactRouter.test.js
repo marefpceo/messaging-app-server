@@ -1,5 +1,6 @@
 const contactRouter = require('../routes/contactRouter');
-
+const { PrismaClient } = require('../generated/prisma');
+const prisma = new PrismaClient();
 const request = require('supertest');
 const express = require('express');
 const { anyObject } = require('jest-mock-extended');
@@ -10,6 +11,7 @@ app.use('/contact', contactRouter);
 
 // Test contactRouter routes
 describe('Test all contactRouter routes', () => {
+  let contactsAdded = false;
   test('GET contact list works', async () => {
     const response = await request(app)
       .get('/contact')
@@ -29,27 +31,71 @@ describe('Test all contactRouter routes', () => {
     );
   });
 
-  test('Add contact POST route works', async () => {
-    const testContact = {
-      name: 'tester',
-      email: 'test@mail.com',
-    };
+  test(`POST route to add contact 'userThree' to 'userOne1' works`, async () => {
     const responseData = await request(app)
       .post('/contact/add')
       .set('Content-Type', 'application/x-www-form-urlencoded')
-      .send(testContact);
+      .send({
+        currentUser: 'userOne1',
+        addUser: 'userThree',
+      });
     expect(responseData.status).toBe(200);
-    expect(responseData.body).toStrictEqual(testContact);
+    expect(responseData.body.message).toBe('userThree added!');
   });
 
-  test('Delete contact DELETE route works', async () => {
-    const randomUserId = 'asdfjkl;12345678';
+  test(`POST route to add contact 'userFive' to 'userOne1' works`, async () => {
+    const responseData = await request(app)
+      .post('/contact/add')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({
+        currentUser: 'userOne1',
+        addUser: 'userFive',
+      });
+    expect(responseData.status).toBe(200);
+    expect(responseData.body.message).toBe('userFive added!');
+  });
+
+  test(`GET route to list all 'userOne1' contacts by username`, async () => {
+    const responseData = await request(app).get(
+      '/contact/userOne1/contact_list',
+    );
+    expect(responseData.body).toContain(
+      expect.objectContaining({
+        username: any(String),
+      }),
+    );
+    contactsAdded = responseData.ok ? true : false;
+  });
+
+  test(`DELETE 'userFive' from 'userOne' works`, async () => {
     const responseData = await request(app)
       .delete('/contact/delete')
       .set('Content-Type', 'application/json')
-      .send(randomUserId);
+      .send({ userToDelete: 'userFive' });
 
     expect(responseData.statusCode).toBe(200);
-    expect(responseData.body.message).toBe('Contact DELETE');
+    expect(responseData.body.message).toBe('userFive DELETED');
+  });
+
+  test(`DELETE 'userThree' from 'userOne' works`, async () => {
+    const responseData = await request(app)
+      .delete('/contact/delete')
+      .set('Content-Type', 'application/json')
+      .send({ userToDelete: 'userThree' });
+
+    expect(responseData.statusCode).toBe(200);
+    expect(responseData.body.message).toBe('userThree DELETED');
+  });
+
+  test(`Verify 'userOne1' has no contacts`, async () => {
+    const userInfo = await prisma.user.findUnique({
+      where: {
+        username: 'userOne1',
+      },
+      include: {
+        contactUserId: true,
+      },
+    });
+    expect(userInfo.contactUserId.length).toBe(0);
   });
 });
