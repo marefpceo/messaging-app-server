@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const { PrismaClient } = require('../generated/prisma');
+const { connect } = require('../routes/contactRouter');
 const prisma = new PrismaClient();
 
 // GET global list of all contacts
@@ -29,6 +30,9 @@ exports.add_contact_post = asyncHandler(async (req, res, next) => {
     where: {
       username: req.body.currentUser,
     },
+    include: {
+      contacts: true,
+    },
   });
   const userToAdd = await prisma.user.findUnique({
     where: {
@@ -42,16 +46,27 @@ exports.add_contact_post = asyncHandler(async (req, res, next) => {
     });
     return;
   } else {
-    await prisma.contact.create({
-      data: {
-        userId: currentUser.id,
-        contactUserId: userToAdd.id,
+    const addContact = await prisma.contact.upsert({
+      where: {
+        userId: parseInt(currentUser.id),
+        userId_contactUserId: {
+          userId: parseInt(currentUser.id),
+          contactUserId: parseInt(userToAdd.id),
+        },
+      },
+      update: {
+        userId: parseInt(currentUser.id),
+        contactUserId: parseInt(userToAdd.id),
+      },
+      create: {
+        contactUserId: parseInt(userToAdd.id),
+        userId: parseInt(currentUser.id),
       },
     });
+    res.json({
+      message: `${userToAdd.username} added!`,
+    });
   }
-  res.json({
-    message: `${userToAdd.username} added!`,
-  });
 });
 
 exports.contact_delete = asyncHandler(async (req, res, next) => {
