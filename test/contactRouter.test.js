@@ -3,7 +3,6 @@ const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
 const request = require('supertest');
 const express = require('express');
-const { anyObject } = require('jest-mock-extended');
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
@@ -90,9 +89,6 @@ describe('Test all contactRouter routes', () => {
     const userInfo = await prisma.user.findUnique({
       where: {
         username: 'userOne1',
-      },
-      include: {
-        contactUserId: true,
       },
     });
     expect(userInfo.contactUserId.length).toBe(0);
