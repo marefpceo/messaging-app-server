@@ -24,6 +24,36 @@ exports.contacts_get = asyncHandler(async (req, res, next) => {
   }
 });
 
+// GET current user contact list
+exports.user_contacts_get = asyncHandler(async (req, res, next) => {
+  const checkUser = await prisma.user.findUnique({
+    where: {
+      username: req.params.username,
+    },
+    include: {
+      contacts: {
+        include: {
+          contactUser: true,
+        },
+      },
+    },
+    select: {
+      contacts: true,
+    },
+  });
+
+  if (checkUser === null) {
+    res.status(404).json({
+      message: 'User not found',
+    });
+    return;
+  } else {
+    res.json({
+      message: 'Contact list',
+    });
+  }
+});
+
 // Add contact to current user
 exports.add_contact_post = asyncHandler(async (req, res, next) => {
   const currentUser = await prisma.user.findUnique({

@@ -59,7 +59,7 @@ describe('Test all contactRouter routes', () => {
     );
     expect(responseData.body).toContain(
       expect.objectContaining({
-        username: any(String),
+        username: expect.any(String),
       }),
     );
     contactsAdded = responseData.ok ? true : false;
