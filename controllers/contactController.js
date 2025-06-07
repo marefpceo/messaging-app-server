@@ -33,12 +33,9 @@ exports.user_contacts_get = asyncHandler(async (req, res, next) => {
     include: {
       contacts: {
         include: {
-          contactUser: true,
+          user: true,
         },
       },
-    },
-    select: {
-      contacts: true,
     },
   });
 
@@ -48,9 +45,11 @@ exports.user_contacts_get = asyncHandler(async (req, res, next) => {
     });
     return;
   } else {
-    res.json({
-      message: 'Contact list',
-    });
+    const contactList = checkUser.contacts.map((record) => ({
+      userId: record.userId,
+      username: record.user.username,
+    }));
+    res.json(contactList);
   }
 });
 

@@ -53,16 +53,17 @@ describe('Test all contactRouter routes', () => {
     expect(responseData.body.message).toBe('userFive added!');
   });
 
-  test(`GET route to list all 'userOne1' contacts by username`, async () => {
+  test(`GET route to return all 'userOne1' contacts by username`, async () => {
     const responseData = await request(app).get(
       '/contact/userOne1/contact_list',
     );
-    expect(responseData.body).toContain(
+    expect(responseData.status).toBe(200);
+    expect(responseData.body).toContainEqual(
       expect.objectContaining({
         username: expect.any(String),
+        userId: expect.any(Number),
       }),
     );
-    contactsAdded = responseData.ok ? true : false;
   });
 
   test(`DELETE 'userFive' from 'userOne' works`, async () => {
