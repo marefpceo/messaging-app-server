@@ -66,12 +66,12 @@ describe('Test all contactRouter routes', () => {
     );
   });
 
-  test(`DELETE 'userFive' from 'userOne' works`, async () => {
+  test(`DELETE 'userFive' from 'userOne1' works`, async () => {
     const responseData = await request(app)
-      .delete('/contact/delete')
+      .delete('/contact/userOne1/delete')
       .set('Content-Type', 'application/json')
-      .send({ userToDelete: 'userFive' });
-
+      .send({ contactToRemove: 'userFive' });
+    console.log(responseData.body);
     expect(responseData.statusCode).toBe(200);
     expect(responseData.body.message).toBe('userFive DELETED');
   });
@@ -80,7 +80,7 @@ describe('Test all contactRouter routes', () => {
     const responseData = await request(app)
       .delete('/contact/delete')
       .set('Content-Type', 'application/json')
-      .send({ userToDelete: 'userThree' });
+      .send({ contactToRemove: 'userThree' });
 
     expect(responseData.statusCode).toBe(200);
     expect(responseData.body.message).toBe('userThree DELETED');

@@ -11,7 +11,7 @@ contactRouter.get('/', contactController.contacts_get);
 contactRouter.post('/add', contactController.add_contact_post);
 
 // DELETE contact
-contactRouter.delete('/delete', contactController.contact_delete);
+contactRouter.delete('/:username/delete', contactController.contact_delete);
 
 // GET Current User contact list
 contactRouter.get(

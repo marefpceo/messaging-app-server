@@ -48,6 +48,7 @@ exports.user_contacts_get = asyncHandler(async (req, res, next) => {
     const contactList = checkUser.contacts.map((record) => ({
       userId: record.userId,
       username: record.user.username,
+      id: record.id,
     }));
     res.json(contactList);
   }
@@ -98,8 +99,35 @@ exports.add_contact_post = asyncHandler(async (req, res, next) => {
   }
 });
 
+// DELETE contact from user contact list
 exports.contact_delete = asyncHandler(async (req, res, next) => {
-  res.json({
-    message: 'Contact DELETE',
+  const currentUser = await prisma.user.findUnique({
+    where: {
+      username: req.params.username,
+    },
+    include: {
+      contacts: {
+        include: {
+          user: true,
+        },
+      },
+    },
   });
+
+  if (currentUser === null) {
+    res.status(404).json({
+      message: 'User not found',
+    });
+    return;
+  } else {
+    const contactRecord = currentUser.contacts;
+    // const removeContact = await prisma.user.update({
+    //   where: {
+    //     username: req.params.username
+    //   },
+    // })
+    res.json(contactRecord, {
+      message: 'Contact DELETE',
+    });
+  }
 });
