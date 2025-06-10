@@ -1,9 +1,7 @@
 const asyncHandler = require('express-async-handler');
 
 exports.conversation_list_get = asyncHandler(async (req, res, next) => {
-  res.json({
-    message: 'Conversation List GET',
-  });
+  res.json();
 });
 
 exports.create_message_get = asyncHandler(async (req, res, next) => {

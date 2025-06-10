@@ -23,7 +23,6 @@ model User {
   sender          Message[]     @relation("sender")
   user            Contact[]     @relation("contactUser")
   contacts        Contact[]     @relation("user")
-  conversations   Conversation[]
 }
 
 model Contact {
@@ -69,8 +68,8 @@ model Conversation {
   subject         String
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  messages        Message[]     
-  users           User[]
+  message         Message       @relation(fields: [messageId], references: [id])  
+  messageId       Int  
 }
 
 model Session {

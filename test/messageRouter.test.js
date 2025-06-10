@@ -12,10 +12,10 @@ describe('Test all messageRouter routes', () => {
   test('conversation list route works', async () => {
     const response = await request(app).get('/message/conversations');
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message: 'Conversation List GET' });
+    expect(response.body).not.toHaveLength(0);
   });
 
-  test('Create message POST route works', async () => {
+  test(`Create message from 'userOne1' to 'userFive'`, async () => {
     const response = await request(app)
       .post('/message/create_message')
       .set('Content-Type', 'application/x-www-form-urlencoded')

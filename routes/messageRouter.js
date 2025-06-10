@@ -7,8 +7,10 @@ const messageController = require('../controllers/messageController');
 // GET conversation list
 messageRouter.get('/conversations', messageController.conversation_list_get);
 
-// POST create message
+// POST create new message and conversation
 messageRouter.post('/create_message', messageController.create_message_post);
+
+// PUT create new message to existing conversation
 
 // GET selected conversation
 messageRouter.get(
