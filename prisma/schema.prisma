@@ -22,7 +22,8 @@ model User {
   recipient       Message[]     @relation("recipient")
   sender          Message[]     @relation("sender")
   user            Contact[]     @relation("contactUser")
-  contacts        Contact[]     @relation(name: "user")  
+  contacts        Contact[]     @relation("user")
+  conversations   Conversation[]
 }
 
 model Contact {
@@ -54,20 +55,22 @@ model Settings {
 
 model Message {
   id              Int           @id @default(autoincrement())
-  sender          User          @relation(name: "sender", fields: [senderId], references: [id])
+  sender          User          @relation("sender", fields: [senderId], references: [id])
   senderId        Int
-  recipient       User          @relation(name: "recipient", fields: [recipientId], references: [id])
+  recipient       User          @relation("recipient", fields: [recipientId], references: [id])
   recipientId     Int    
   context         String
   createdAt       DateTime      @default(now())
-  conversation    Conversation  @relation(fields: [conversationId], references: [id])
-  conversationId  Int
+  conversations   Conversation[]
 }
 
 model Conversation {
   id              Int           @id @default(autoincrement())
   subject         String
-  messages        Message[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  messages        Message[]     
+  users           User[]
 }
 
 model Session {

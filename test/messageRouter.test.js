@@ -4,76 +4,58 @@ const request = require('supertest');
 const express = require('express');
 const app = express();
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use('/message', messageRouter);
 
 // Test GET Conversation list
-describe('GET /message/conversations', () => {
-  test('conversation list route works', (done) => {
-    request(app)
-      .get('/message/conversations')
-      .expect('Content-Type', /json/)
-      .expect({ message: 'Conversation List GET' })
-      .expect(200, done);
+describe('Test all messageRouter routes', () => {
+  test('conversation list route works', async () => {
+    const response = await request(app).get('/message/conversations');
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: 'Conversation List GET' });
   });
-});
 
-// Test POST create message
-describe('POST /message/create_message_post', () => {
-  test('create message POST route works', (done) => {
-    request(app)
+  test('Create message POST route works', async () => {
+    const response = await request(app)
       .post('/message/create_message')
-      .set('Accept', 'application/json')
-      .send({ message: 'test' })
-      .expect('Content-Type', /json/)
-      .expect({ message: 'Create Message POST' })
-      .expect(200, done);
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({ message: 'test' });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: 'Create Message POST' });
   });
-});
 
-// Test GET selected conversation
-describe('GET /message/conversation/:contactId', () => {
-  test('get selected conversation GET route works', (done) => {
-    request(app)
-      .get('/message/conversation/contact-id-generated')
-      .expect('Content-Type', /json/)
-      .expect({
-        id: 'contact-id-generated',
-        message: 'Conversation GET',
-      })
-      .expect(200, done);
+  test('GET selected conversation route works', async () => {
+    const response = await request(app).get(
+      '/message/conversation/contact-id-generated',
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: 'contact-id-generated',
+      message: 'Conversation GET',
+    });
   });
-});
 
-// Test DELETE conversation
-describe('DELETE /message/conversation/:contactId', () => {
-  test('delete selected conversation route works', (done) => {
-    request(app)
-      .delete('/message/conversation/:contactId')
-      .expect('Content-Type', /json/)
-      .expect({ message: 'Conversation DELETE' })
-      .expect(200, done);
+  test('DELETE selected conversation route works', async () => {
+    const response = await request(app).delete(
+      '/message/conversation/:contactId',
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: 'Conversation DELETE' });
   });
-});
 
-// Test GET message
-describe('GET /message/conversation/:contactId/:messageId', () => {
-  test('get selected conversation message route works', (done) => {
-    request(app)
-      .get('/message/conversation/:contactId/:messageId')
-      .expect('Content-Type', /json/)
-      .expect({ message: 'Message GET' })
-      .expect(200, done);
+  test('GET selected conversation message route works', async () => {
+    const response = await request(app).get(
+      '/message/conversation/:contactId/:messageId',
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: 'Message GET' });
   });
-});
 
-// Test DELETE message
-describe('DELETE /message/conversation/:contactId/:messageId', () => {
-  test('delete message route works', (done) => {
-    request(app)
-      .delete('/message/conversation/:contactId/:messageId')
-      .expect('Content-Type', /json/)
-      .expect({ message: 'Message DELETE' })
-      .expect(200, done);
+  test('DELTE message route works', async () => {
+    const response = await request(app).delete(
+      '/message/conversation/:contactId/:messageId',
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: 'Message DELETE' });
   });
 });
