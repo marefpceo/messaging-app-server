@@ -1,4 +1,6 @@
 const messageRouter = require('../routes/messageRouter');
+const { PrismaClient } = require('../generated/prisma');
+const prisma = new PrismaClient();
 
 const request = require('supertest');
 const express = require('express');
@@ -7,21 +9,39 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use('/message', messageRouter);
 
-// Test GET Conversation list
+// Test message controller to create and delete conversations and messages
 describe('Test all messageRouter routes', () => {
-  test('conversation list route works', async () => {
-    const response = await request(app).get('/message/conversations');
+  test('GET request to verify userOne1 has no conversations', async () => {
+    const response = await request(app).get('/message/userOne1/conversations');
     expect(response.status).toBe(200);
-    expect(response.body).not.toHaveLength(0);
+    expect(response.body).toHaveLength(0);
   });
 
-  test(`Create message from 'userOne1' to 'userFive'`, async () => {
-    const response = await request(app)
-      .post('/message/create_message')
-      .set('Content-Type', 'application/x-www-form-urlencoded')
-      .send({ message: 'test' });
+  test(`Get userOne1 info to create new conversation and message`, async () => {
+    const response = await request(app).get('/message/userOne1/create_message');
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message: 'Create Message POST' });
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        contacts: expect.any(Array),
+      }),
+    );
+  });
+
+  test(`Create new conversation and send message from 'userOne1' to 'userFive'`, async () => {
+    const response = await request(app)
+      .post('/message/userOne1/create_message')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({
+        subject: 'New Message',
+        sender: 'userOne1',
+        recipient: 'userFive',
+        context: 'Message to userFive for test purposes!',
+        newConversation: true,
+      });
+    console.log(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: 'Message sent to userFive' });
   });
 
   test('GET selected conversation route works', async () => {

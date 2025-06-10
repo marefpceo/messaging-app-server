@@ -4,35 +4,47 @@ const messageController = require('../controllers/messageController');
 
 /********** Message Routing **********/
 /*************************************/
-// GET conversation list
-messageRouter.get('/conversations', messageController.conversation_list_get);
+// GET conversation list for current user
+messageRouter.get(
+  '/:username/conversations',
+  messageController.conversation_list_get,
+);
+
+// GET create new message
+messageRouter.get(
+  '/:username/create_message',
+  messageController.create_message_get,
+);
 
 // POST create new message and conversation
-messageRouter.post('/create_message', messageController.create_message_post);
+messageRouter.post(
+  '/:username/create_message',
+  messageController.create_message_post,
+);
 
 // PUT create new message to existing conversation
 
 // GET selected conversation
 messageRouter.get(
-  '/conversation/:contactId',
+  '/:username/conversation/:conversationId',
   messageController.conversation_get,
 );
 
 // DELETE conversation
 messageRouter.delete(
-  '/conversation/:contactId',
+  '/:username/conversation/:conversationId',
   messageController.conversation_delete,
 );
 
 // GET selected conversation message
 messageRouter.get(
-  '/conversation/:contactId/:messageId',
+  '/:username/conversation/:conversationId/:messageId',
   messageController.message_get,
 );
 
 // DELETE message
 messageRouter.delete(
-  '/conversation/:contactId/:messageId',
+  '/:username/conversation/:conversationId/:messageId',
   messageController.message_delete,
 );
 
