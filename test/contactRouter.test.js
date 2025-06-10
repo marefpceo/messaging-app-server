@@ -5,7 +5,7 @@ const request = require('supertest');
 const express = require('express');
 const app = express();
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use('/contact', contactRouter);
 
 // Test contactRouter routes
@@ -69,17 +69,16 @@ describe('Test all contactRouter routes', () => {
   test(`DELETE 'userFive' from 'userOne1' works`, async () => {
     const responseData = await request(app)
       .delete('/contact/userOne1/delete')
-      .set('Content-Type', 'application/json')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
       .send({ contactToRemove: 'userFive' });
-    console.log(responseData.body);
     expect(responseData.statusCode).toBe(200);
-    expect(responseData.body.message).toBe('userFive DELETED');
+    expect(responseData.body.message).toEqual('userFive DELETED');
   });
 
   test(`DELETE 'userThree' from 'userOne' works`, async () => {
     const responseData = await request(app)
-      .delete('/contact/delete')
-      .set('Content-Type', 'application/json')
+      .delete('/contact/userOne1/delete')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
       .send({ contactToRemove: 'userThree' });
 
     expect(responseData.statusCode).toBe(200);
@@ -91,7 +90,10 @@ describe('Test all contactRouter routes', () => {
       where: {
         username: 'userOne1',
       },
+      include: {
+        contacts: true,
+      },
     });
-    expect(userInfo.contactUserId.length).toBe(0);
+    expect(userInfo.contacts.length).toBe(0);
   });
 });

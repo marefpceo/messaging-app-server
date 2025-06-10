@@ -92,9 +92,12 @@ exports.add_contact_post = asyncHandler(async (req, res, next) => {
         contactUserId: parseInt(userToAdd.id),
         userId: parseInt(currentUser.id),
       },
+      include: {
+        contactUser: true,
+      },
     });
     res.json({
-      message: `${userToAdd.username} added!`,
+      message: `${addContact.contactUser.username} added!`,
     });
   }
 });
@@ -108,7 +111,11 @@ exports.contact_delete = asyncHandler(async (req, res, next) => {
     include: {
       contacts: {
         include: {
-          user: true,
+          contactUser: {
+            include: {
+              user: true,
+            },
+          },
         },
       },
     },
@@ -120,14 +127,20 @@ exports.contact_delete = asyncHandler(async (req, res, next) => {
     });
     return;
   } else {
-    const contactRecord = currentUser.contacts;
-    // const removeContact = await prisma.user.update({
-    //   where: {
-    //     username: req.params.username
-    //   },
-    // })
-    res.json(contactRecord, {
-      message: 'Contact DELETE',
+    const contactRecord = currentUser.contacts.find(
+      (record) => record.contactUser.username === req.body.contactToRemove,
+    );
+
+    const removeContact = await prisma.contact.delete({
+      where: {
+        id: parseInt(contactRecord.id),
+      },
+      include: {
+        contactUser: true,
+      },
+    });
+    res.status(200).json({
+      message: `${removeContact.contactUser.username} DELETED`,
     });
   }
 });
