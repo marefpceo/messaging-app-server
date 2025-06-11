@@ -55,13 +55,17 @@ exports.create_message_post = [
       });
       return;
     } else {
-      if (req.body.newConversation) {
-        const createConversation = await prisma.conversation.create({
-          data: {
-            subject: req.body.subject,
+      // if (req.body.newConversation) {
+      const createConversation = await prisma.conversation.create({
+        data: {
+          message: {
+            create: {
+              senderId: {},
+            },
           },
-        });
-      }
+        },
+      });
+      // }
 
       res.json({
         message: 'Create Message POST',
