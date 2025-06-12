@@ -60,7 +60,9 @@ model Message {
   recipientId     Int    
   context         String
   createdAt       DateTime      @default(now())
-  conversations   Conversation[]
+  // conversations   Conversation[]
+  conversation    Conversation  @relation(fields: [conversationId], references: [id])
+  conversationId  Int
 }
 
 model Conversation {
@@ -68,8 +70,9 @@ model Conversation {
   subject         String
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  message         Message       @relation(fields: [messageId], references: [id])  
-  messageId       Int  
+  // message         Message       @relation(fields: [messageId], references: [id])  
+  // messageId       Int  
+  messages        Message[]
 }
 
 model Session {

@@ -7,14 +7,16 @@ const prisma = new PrismaClient();
 exports.conversation_list_get = asyncHandler(async (req, res, next) => {
   const conversationList = await prisma.conversation.findMany({
     where: {
-      message: {
-        sender: {
-          username: req.params.username,
+      messages: {
+        every: {
+          sender: {
+            username: req.params.username,
+          },
         },
       },
     },
     include: {
-      message: true,
+      messages: true,
     },
   });
   res.json(conversationList);
@@ -55,19 +57,24 @@ exports.create_message_post = [
       });
       return;
     } else {
-      // if (req.body.newConversation) {
-      const createConversation = await prisma.conversation.create({
+      const newConversation = await prisma.conversation.create({
         data: {
-          message: {
-            create: {
-              senderId: {},
-            },
+          subject: req.body.subject,
+          messages: {
+            create: [
+              {
+                senderId: parseInt(req.body.senderId),
+                recipientId: parseInt(req.body.recipientId),
+                context: req.body.context,
+              },
+            ],
           },
         },
+        include: {
+          messages: true,
+        },
       });
-      // }
-
-      res.json({
+      res.json(newConversation, {
         message: 'Create Message POST',
       });
     }

@@ -11,6 +11,8 @@ app.use('/message', messageRouter);
 
 // Test message controller to create and delete conversations and messages
 describe('Test all messageRouter routes', () => {
+  let newConversationId = '';
+
   test('GET request to verify userOne1 has no conversations', async () => {
     const response = await request(app).get('/message/userOne1/conversations');
     expect(response.status).toBe(200);
@@ -28,14 +30,30 @@ describe('Test all messageRouter routes', () => {
     );
   });
 
-  test(`Create new conversation and send message from 'userOne1' to 'userFive'`, async () => {
+  test(`Create new conversation and message from 'userOne1' to 'userFive'`, async () => {
+    const userOneId = await prisma.user.findUnique({
+      where: {
+        username: 'userOne1',
+      },
+      select: {
+        id: true,
+      },
+    });
+    const userFiveId = await prisma.user.findUnique({
+      where: {
+        username: 'userFive',
+      },
+      select: {
+        id: true,
+      },
+    });
     const response = await request(app)
       .post('/message/userOne1/create_message')
       .set('Content-Type', 'application/x-www-form-urlencoded')
       .send({
         subject: 'New Message',
-        sender: 'userOne1',
-        recipient: 'userFive',
+        senderId: userOneId.id,
+        recipientId: userFiveId.id,
         context: 'Message to userFive for test purposes!',
         newConversation: true,
       });
