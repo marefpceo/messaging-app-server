@@ -74,8 +74,46 @@ exports.create_message_post = [
           messages: true,
         },
       });
-      res.json(newConversation, {
-        message: 'Create Message POST',
+      res.json({
+        message: 'New conversation created!',
+        id: newConversation.id,
+      });
+    }
+  }),
+];
+
+exports.create_message_put = [
+  body('context')
+    .trim()
+    .isLength({ min: 8, max: 1000 })
+    .withMessage('Message must be between 8 and 1000 characters')
+    .escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty) {
+      res.status(200).json({
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      const newMessage = await prisma.conversation.update({
+        where: {
+          id: parseInt(req.body.newConversationId),
+        },
+        data: {
+          messages: {
+            create: {
+              senderId: parseInt(req.body.senderId),
+              recipientId: parseInt(req.body.recipientId),
+              context: req.body.context,
+            },
+          },
+        },
+      });
+      res.json({
+        message: 'New message created',
       });
     }
   }),

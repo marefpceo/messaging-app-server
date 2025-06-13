@@ -57,9 +57,46 @@ describe('Test all messageRouter routes', () => {
         context: 'Message to userFive for test purposes!',
         newConversation: true,
       });
-    console.log(response.body);
+    newConversationId = response.body.id;
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message: 'Message sent to userFive' });
+    expect(response.body).toEqual({
+      message: 'New conversation created!',
+      id: expect.any(Number),
+    });
+  });
+
+  test(`Create new message with existing conversation from 'userFive' to 'userOne1'`, async () => {
+    const userFiveId = await prisma.user.findUnique({
+      where: {
+        username: 'userFive',
+      },
+      select: {
+        id: true,
+      },
+    });
+    const userOneId = await prisma.user.findUnique({
+      where: {
+        username: 'userOne1',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const response = await request(app)
+      .put('/message/userFive/create_message')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({
+        senderId: userFiveId.id,
+        recipientId: userOneId.id,
+        context: 'User Five reply to User One message.',
+        newConversation: false,
+        newConversationId: newConversationId,
+      });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      message: 'New message created',
+    });
   });
 
   test('GET selected conversation route works', async () => {

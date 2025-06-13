@@ -23,6 +23,10 @@ messageRouter.post(
 );
 
 // PUT create new message to existing conversation
+messageRouter.put(
+  '/:username/create_message',
+  messageController.create_message_put,
+);
 
 // GET selected conversation
 messageRouter.get(
