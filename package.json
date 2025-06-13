@@ -7,7 +7,7 @@
     "debug-start": "DEBUG=server:* npm start",
     "serverstart": "nodemon npm run debug-start",
     "prepare": "husky",
-    "test": "cross-env NODE_ENV=\"test\" jest test/ --verbose",
+    "test": "cross-env NODE_ENV=\"test\" jest test/ --verbose --watch --detectOpenHandles",
     "dbseed": "npx prisma db seed"
   },
   "prisma": {
