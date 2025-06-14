@@ -82,6 +82,7 @@ exports.create_message_post = [
   }),
 ];
 
+// Handles creating new message by updating selected conversation
 exports.create_message_put = [
   body('context')
     .trim()
@@ -119,22 +120,32 @@ exports.create_message_put = [
   }),
 ];
 
+// Gets selected conversation and messages
 exports.conversation_get = asyncHandler(async (req, res, next) => {
-  res.json({
-    id: req.params.contactId,
-    message: 'Conversation GET',
+  const selectedConversation = await prisma.conversation.findUnique({
+    where: {
+      id: parseInt(req.params.conversationId),
+    },
+    include: {
+      messages: true,
+    },
   });
+  res.json(selectedConversation);
+});
+
+// Gets selected message
+exports.message_get = asyncHandler(async (req, res, next) => {
+  const selectedMessage = await prisma.message.findUnique({
+    where: {
+      id: parseInt(req.params.messageId),
+    },
+  });
+  res.json(selectedMessage);
 });
 
 exports.conversation_delete = asyncHandler(async (req, res, next) => {
   res.json({
     message: 'Conversation DELETE',
-  });
-});
-
-exports.message_get = asyncHandler(async (req, res, next) => {
-  res.json({
-    message: 'Message GET',
   });
 });
 

@@ -99,15 +99,47 @@ describe('Test all messageRouter routes', () => {
     });
   });
 
-  test('GET selected conversation route works', async () => {
+  test(`GET selected conversation with 'userOne1' works`, async () => {
     const response = await request(app).get(
-      '/message/conversation/contact-id-generated',
+      `/message/userOne1/conversation/${newConversationId}`,
     );
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
-      id: 'contact-id-generated',
-      message: 'Conversation GET',
+      id: newConversationId,
+      subject: 'New Message',
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+      messages: expect.any(Array),
     });
+  });
+
+  test(`GET selected conversation with 'userFive' works`, async () => {
+    const response = await request(app).get(
+      `/message/userFive/conversation/${newConversationId}`,
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: newConversationId,
+      subject: 'New Message',
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+      messages: expect.any(Array),
+    });
+  });
+
+  test('GET selected message route works', async () => {
+    const message = await prisma.message.findFirst({
+      where: {
+        sender: {
+          username: 'userOne1',
+        },
+      },
+    });
+    const response = await request(app).get(
+      `/message/userOne1/conversation/${message.id}`,
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: 'Message GET' });
   });
 
   test('DELETE selected conversation route works', async () => {
@@ -116,14 +148,6 @@ describe('Test all messageRouter routes', () => {
     );
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ message: 'Conversation DELETE' });
-  });
-
-  test('GET selected conversation message route works', async () => {
-    const response = await request(app).get(
-      '/message/conversation/:contactId/:messageId',
-    );
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message: 'Message GET' });
   });
 
   test('DELTE message route works', async () => {
