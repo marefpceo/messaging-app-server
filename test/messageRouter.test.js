@@ -13,6 +13,10 @@ app.use('/message', messageRouter);
 describe('Test all messageRouter routes', () => {
   let newConversationId = '';
 
+  afterAll(async () => {
+    await prisma.conversation.deleteMany({});
+  });
+
   test('GET request to verify userOne1 has no conversations', async () => {
     const response = await request(app).get('/message/userOne1/conversations');
     expect(response.status).toBe(200);
