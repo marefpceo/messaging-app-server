@@ -36,7 +36,7 @@ messageRouter.get(
 
 // GET selected conversation message
 messageRouter.get(
-  '/:username/conversation/:messageId',
+  '/:username/conversation/:conversationId/:messageId',
   messageController.message_get,
 );
 

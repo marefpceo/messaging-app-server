@@ -136,10 +136,15 @@ describe('Test all messageRouter routes', () => {
       },
     });
     const response = await request(app).get(
-      `/message/userOne1/conversation/${message.id}`,
+      `/message/userOne1/conversation/${message.conversationId}/${message.id}`,
     );
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message: 'Message GET' });
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        context: expect.any(String),
+      }),
+    );
   });
 
   test('DELETE selected conversation route works', async () => {
