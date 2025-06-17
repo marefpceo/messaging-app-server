@@ -9,75 +9,74 @@ datasource db {
 }
 
 model User {
-  id              Int           @id @default(autoincrement())
-  firstname       String    
-  lastname        String
-  username        String        @unique    
-  date_of_birth   DateTime  
-  email           String        @unique
-  password        String        
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  profile         Profile?       
-  recipient       Message[]     @relation("recipient")
-  sender          Message[]     @relation("sender")
-  user            Contact[]     @relation("contactUser")
-  contacts        Contact[]     @relation("user")
+  id                Int           @id @default(autoincrement())
+  firstname         String    
+  lastname          String
+  username          String        @unique    
+  date_of_birth     DateTime  
+  email             String        @unique
+  password          String        
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  profile           Profile?       
+  recipient         Message[]     @relation("recipient")
+  sender            Message[]     @relation("sender")
+  user              Contact[]     @relation("contactUser")
+  contacts          Contact[]     @relation("user")
 }
 
 model Contact {
-  id              Int           @id @default(autoincrement())
-  user            User          @relation("user", fields: [userId], references: [id])
-  userId          Int
-  contactUser     User          @relation("contactUser", fields: [contactUserId], references: [id], onUpdate: Cascade)
-  contactUserId   Int
+  id                Int           @id @default(autoincrement())
+  user              User          @relation("user", fields: [userId], references: [id])
+  userId            Int
+  contactUser       User          @relation("contactUser", fields: [contactUserId], references: [id], onUpdate: Cascade)
+  contactUserId     Int
 
   @@unique([userId, contactUserId]) //enforces unique combination of userId and contactUserId
 }
 
 model Profile {
-  id              Int           @id @default(autoincrement())
-  user            User          @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  userId          Int           @unique
-  bio             String        @default("New mChat User")
-  settings        Settings?      
+  id                Int           @id @default(autoincrement())
+  user              User          @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId            Int           @unique
+  bio               String        @default("New mChat User")
+  settings          Settings?      
 }
 
 model Settings {
-  id              Int           @id @default(autoincrement())
-  profile         Profile?      @relation(fields: [profileId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  profileId       Int           @unique
-  background      String        @default("white")
-  font            String        @default("normal")
-  color           String        @default("black")
+  id                Int           @id @default(autoincrement())
+  profile           Profile?      @relation(fields: [profileId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  profileId         Int           @unique
+  background        String        @default("white")
+  font              String        @default("normal")
+  color             String        @default("black")
 }
 
 model Message {
-  id              Int           @id @default(autoincrement())
-  sender          User          @relation("sender", fields: [senderId], references: [id])
-  senderId        Int
-  recipient       User          @relation("recipient", fields: [recipientId], references: [id])
-  recipientId     Int    
-  context         String
-  createdAt       DateTime      @default(now())
-  // conversations   Conversation[]
-  conversation    Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  conversationId  Int
+  id                Int           @id @default(autoincrement())
+  sender            User          @relation("sender", fields: [senderId], references: [id])
+  senderId          Int
+  recipient         User          @relation("recipient", fields: [recipientId], references: [id])
+  recipientId       Int    
+  context           String
+  createdAt         DateTime      @default(now())
+  delete_ready      Boolean       @default(false)
+  delete_timestamp  DateTime
+  conversation      Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId    Int
 }
 
 model Conversation {
-  id              Int           @id @default(autoincrement())
-  subject         String
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  // message         Message       @relation(fields: [messageId], references: [id])  
-  // messageId       Int  
-  messages        Message[]
+  id                Int           @id @default(autoincrement())
+  subject           String
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  messages          Message[]
 }
 
 model Session {
-  id              String        @id
-  sid             String        @unique
-  data            String
-  expiresAt       DateTime
+  id                String        @id
+  sid               String        @unique
+  data              String
+  expiresAt         DateTime
 }
