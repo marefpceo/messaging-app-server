@@ -61,7 +61,7 @@ model Message {
   context           String
   createdAt         DateTime      @default(now())
   delete_ready      Boolean       @default(false)
-  delete_timestamp  DateTime
+  delete_timestamp  DateTime?
   conversation      Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   conversationId    Int
 }
