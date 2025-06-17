@@ -147,19 +147,32 @@ describe('Test all messageRouter routes', () => {
     );
   });
 
-  test('DELETE selected conversation route works', async () => {
+  test('DELETE selected message route works', async () => {
+    const message = await prisma.message.findFirst({
+      where: {
+        sender: {
+          username: 'userOne1',
+        },
+      },
+    });
     const response = await request(app).delete(
-      '/message/conversation/:contactId',
+      `/message/userOne1/conversation/${message.conversationId}/${message.id}`,
     );
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message: 'Conversation DELETE' });
+    expect(response.body).toEqual({
+      message: `Message ${message.id} moved to trash`,
+    });
   });
 
-  test('DELTE message route works', async () => {
+  test('DELETE selected conversation route works', async () => {
+    const conversation = await prisma.conversation.findFirst();
+
     const response = await request(app).delete(
-      '/message/conversation/:contactId/:messageId',
+      `/message/userOne1/conversation/${conversation.id}`,
     );
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ message: 'Message DELETE' });
+    expect(response.body).toEqual({
+      message: `Conversation ${conversation.subject} deleted`,
+    });
   });
 });

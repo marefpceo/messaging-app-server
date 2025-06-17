@@ -34,16 +34,16 @@ messageRouter.get(
   messageController.conversation_get,
 );
 
-// GET selected conversation message
-messageRouter.get(
-  '/:username/conversation/:conversationId/:messageId',
-  messageController.message_get,
-);
-
 // DELETE conversation
 messageRouter.delete(
   '/:username/conversation/:conversationId',
   messageController.conversation_delete,
+);
+
+// GET selected conversation message
+messageRouter.get(
+  '/:username/conversation/:conversationId/:messageId',
+  messageController.message_get,
 );
 
 // DELETE message

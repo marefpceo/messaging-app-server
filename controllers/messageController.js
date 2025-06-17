@@ -143,14 +143,29 @@ exports.message_get = asyncHandler(async (req, res, next) => {
   res.json(selectedMessage);
 });
 
-exports.conversation_delete = asyncHandler(async (req, res, next) => {
+// Handles deleted a message. Message is not deleted immediatly but instead marked for deletion
+exports.message_delete = asyncHandler(async (req, res, next) => {
+  const messageToDelete = await prisma.message.update({
+    where: {
+      id: parseInt(req.params.messageId),
+    },
+    data: {
+      delete_ready: true,
+      delete_timestamp: new Date().toISOString(),
+    },
+  });
   res.json({
-    message: 'Conversation DELETE',
+    message: `Message ${messageToDelete.id} moved to trash`,
   });
 });
 
-exports.message_delete = asyncHandler(async (req, res, next) => {
+exports.conversation_delete = asyncHandler(async (req, res, next) => {
+  const conversationToDelete = await prisma.conversation.delete({
+    where: {
+      id: parseInt(req.params.conversationId),
+    },
+  });
   res.json({
-    message: 'Message DELETE',
+    message: `Conversation ${conversationToDelete.subject} deleted`,
   });
 });
