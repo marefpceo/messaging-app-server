@@ -22,7 +22,18 @@ exports.signup_post = [
     .trim()
     .isLength({ min: 8, max: 64 })
     .withMessage('Username must be at least 8 characters')
-    .escape(),
+    .escape()
+    .custom(async (value) => {
+      const usernameCheck = await prisma.user.findUnique({
+        where: {
+          username: value,
+        },
+      });
+      if (usernameCheck) {
+        throw new Error('Username already in use');
+      }
+    })
+    .withMessage('Username already in use'),
   body('date_of_birth').trim().isDate({ format: 'YYYY-MM-DD' }),
   body('email')
     .trim()
