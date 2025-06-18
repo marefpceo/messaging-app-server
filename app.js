@@ -10,13 +10,27 @@ const passport = require('passport');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const { PrismaClient } = require('./generated/prisma');
 
+const { rateLimit } = require('express-rate-limit');
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+});
+
 const indexRouter = require('./routes/indexRouter');
 const messageRouter = require('./routes/messageRouter');
 const userRouter = require('./routes/userRouter');
 const contactRouter = require('./routes/contactRouter');
 
 const app = express();
+const helmet = require('helmet');
 
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+
+app.use(limiter);
+app.use(helmet());
 // app.use(cors);
 app.use(logger('dev'));
 app.use(express.json());
@@ -28,6 +42,7 @@ app.use(
   expressSession({
     cookie: {
       maxAge: 1 * 1 * 10 * 60 * 1000,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
     },
     secret: process.env.SESSION_SECRET,
     resave: true,
