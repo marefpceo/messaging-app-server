@@ -45,19 +45,26 @@ passport.use(
   ),
 );
 
-passport.serializeUser((user, cb) => {
+passport.serializeUser((user, done) => {
   process.nextTick(() => {
-    cb(null, {
+    done(null, {
       id: user.id,
       username: user.username,
     });
   });
 });
 
-passport.deserializeUser((user, cb) => {
-  process.nextTick(() => {
-    return cb(null, user);
-  });
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    done(null, user.id);
+  } catch (err) {
+    done(err);
+  }
 });
 
 // POST sign up page
@@ -77,5 +84,15 @@ router.post(
     });
   },
 );
+
+// POST logout
+router.post('/logout', (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/login');
+  });
+});
 
 module.exports = router;
