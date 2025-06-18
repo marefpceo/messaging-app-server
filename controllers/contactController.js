@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler');
 const { PrismaClient } = require('../generated/prisma');
-const { connect } = require('../routes/contactRouter');
 const prisma = new PrismaClient();
 
 // GET global list of all contacts
