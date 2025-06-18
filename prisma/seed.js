@@ -1,5 +1,6 @@
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
+const argon2 = require('argon2');
 
 async function main() {
   console.log('Create Users for Development Database.');
@@ -13,7 +14,12 @@ async function main() {
       username: 'userOne1',
       date_of_birth: new Date('1985-10-5'),
       email: 'userOne@test.com',
-      password: 'kkkkkkkkkk',
+      password: await argon2.hash('kkkkkkkkk', {
+        type: argon2.argon2id,
+        memoryCost: 47104,
+        timeCost: 1,
+        parallelism: 1,
+      }),
       profile: {
         create: {
           bio: `The first user to be created! It's a pleasure`,
@@ -45,7 +51,12 @@ async function main() {
       username: 'userTwo2',
       date_of_birth: new Date('1978-5-20'),
       email: 'userTwo@test.com',
-      password: 'kkkkkkkkkk',
+      password: await argon2.hash('kkkkkkkkk', {
+        type: argon2.argon2id,
+        memoryCost: 47104,
+        timeCost: 1,
+        parallelism: 1,
+      }),
       profile: {
         create: {
           settings: {
@@ -72,7 +83,12 @@ async function main() {
       username: 'userThree',
       date_of_birth: new Date('2000-2-3'),
       email: 'userThree@test.com',
-      password: 'kkkkkkkkkk',
+      password: await argon2.hash('kkkkkkkkk', {
+        type: argon2.argon2id,
+        memoryCost: 47104,
+        timeCost: 1,
+        parallelism: 1,
+      }),
       profile: {
         create: {
           settings: {
@@ -99,7 +115,12 @@ async function main() {
       username: 'userFour',
       date_of_birth: new Date('1985-7-31'),
       email: 'user@Four.com',
-      password: 'kkkkkkkkkk',
+      password: await argon2.hash('kkkkkkkkk', {
+        type: argon2.argon2id,
+        memoryCost: 47104,
+        timeCost: 1,
+        parallelism: 1,
+      }),
       profile: {
         create: {
           settings: {
@@ -126,7 +147,12 @@ async function main() {
       username: 'userFive',
       date_of_birth: new Date('1965-11-13'),
       email: 'u5Five@me.com',
-      password: 'kkkkkkkkkk',
+      password: await argon2.hash('kkkkkkkkk', {
+        type: argon2.argon2id,
+        memoryCost: 47104,
+        timeCost: 1,
+        parallelism: 1,
+      }),
       profile: {
         create: {
           settings: {
