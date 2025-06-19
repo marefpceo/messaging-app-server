@@ -31,6 +31,7 @@ app.set('trust proxy', 1);
 
 app.use(limiter);
 app.use(helmet());
+app.user(compression());
 // app.use(cors);
 app.use(logger('dev'));
 app.use(express.json());
