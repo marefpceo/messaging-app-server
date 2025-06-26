@@ -55,13 +55,33 @@ exports.signup_post = [
     .isLength({ min: 9 })
     .withMessage('Password must contain a minimum of 9 characters')
     .escape(),
+  body('confirmPassword')
+    .trim()
+    .isLength({ min: 9 })
+    .withMessage('Passwords do not match')
+    .custom((value, { req }) => {
+      if (value != req.body.password) {
+        throw new Error('Passwords do not match');
+      }
+      return true;
+    })
+    .withMessage('Passwords do not match'),
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
-
+    const formData = {
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      username: req.body.username,
+      date_of_birth: req.body.date_of_birth,
+      email: req.body.email,
+      password: req.body.password,
+      confirmPassword: req.body.confirmPassword,
+    };
     if (!errors.isEmpty()) {
-      res.status(200).json({
-        errors: errors.mapped(),
+      res.status(400).json({
+        formData,
+        errors: errors.array(),
       });
       return;
     } else {
@@ -88,7 +108,7 @@ exports.signup_post = [
           },
         },
       });
-      res.json(newUser);
+      res.status(200).json(newUser);
     }
   }),
 ];
