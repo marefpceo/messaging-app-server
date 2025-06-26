@@ -81,7 +81,7 @@ exports.signup_post = [
     if (!errors.isEmpty()) {
       res.status(400).json({
         formData,
-        errors: errors.array(),
+        errors: errors.mapped(),
       });
       return;
     } else {
