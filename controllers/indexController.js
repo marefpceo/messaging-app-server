@@ -9,12 +9,14 @@ exports.signup_post = [
   body('firstname')
     .trim()
     .isLength({ min: 3 })
+    .withMessage('First Name must be at least 3 characters')
     .isAlphanumeric()
     .withMessage('Only alphanumeric characters allowed')
     .escape(),
   body('lastname')
     .trim()
     .isLength({ min: 3 })
+    .withMessage('Last Name must be at least 3 characters')
     .isAlphanumeric()
     .withMessage('Only alphanumeric characters allowed')
     .escape(),
@@ -34,10 +36,14 @@ exports.signup_post = [
       }
     })
     .withMessage('Username already in use'),
-  body('date_of_birth').trim().isDate({ format: 'YYYY-MM-DD' }),
+  body('date_of_birth')
+    .trim()
+    .isDate({ format: 'YYYY-MM-DD' })
+    .withMessage('Use date format YYYY-MM-DD'),
   body('email')
     .trim()
     .isEmail()
+    .withMessage('Email format invalid. (ex. user@email.com')
     .escape()
     .custom(async (value) => {
       const emailCheck = await prisma.user.findUnique({
@@ -57,15 +63,12 @@ exports.signup_post = [
     .escape(),
   body('confirmPassword')
     .trim()
-    .isLength({ min: 9 })
-    .withMessage('Passwords do not match')
     .custom((value, { req }) => {
       if (value != req.body.password) {
         throw new Error('Passwords do not match');
       }
       return true;
-    })
-    .withMessage('Passwords do not match'),
+    }),
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
@@ -81,7 +84,7 @@ exports.signup_post = [
     if (!errors.isEmpty()) {
       res.status(400).json({
         formData,
-        errors: errors.mapped(),
+        errors: errors.array(),
       });
       return;
     } else {
