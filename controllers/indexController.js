@@ -111,6 +111,11 @@ exports.signup_post = [
           },
         },
       });
+      req.login(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+      });
       res.status(200).json(newUser);
     }
   }),
