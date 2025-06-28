@@ -4,13 +4,19 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const cors = require('cors');
 const expressSession = require('express-session');
 const passport = require('passport');
 const { PrismaSessionStore } = require('@quixo3/prisma-session-store');
 const { PrismaClient } = require('./generated/prisma');
-
 const validation = require('./helpers/validation');
+const cors = require('cors');
+const allowedOrigins = require('./helpers/corsOptions');
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  maxAge: 300,
+  optionsSuccessStatus: 204,
+};
 
 const { rateLimit } = require('express-rate-limit');
 const limiter = rateLimit({
@@ -33,7 +39,7 @@ app.set('trust proxy', 1);
 
 app.use(limiter);
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
