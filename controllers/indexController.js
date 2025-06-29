@@ -36,10 +36,7 @@ exports.signup_post = [
       }
     })
     .withMessage('Username already in use'),
-  body('date_of_birth')
-    .trim()
-    .isDate({ format: 'YYYY-MM-DD' })
-    .withMessage('Use date format YYYY-MM-DD'),
+  body('date_of_birth').trim().notEmpty().withMessage('Date of Birth required'),
   body('email')
     .trim()
     .isEmail()
