@@ -108,7 +108,7 @@ exports.signup_post = [
           },
         },
       });
-      req.login(user, (err) => {
+      req.login(newUser.email, (err) => {
         if (err) {
           return next(err);
         }
