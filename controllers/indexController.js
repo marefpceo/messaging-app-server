@@ -108,12 +108,12 @@ exports.signup_post = [
           },
         },
       });
-      req.login(newUser.email, (err) => {
+      req.login(newUser, (err) => {
         if (err) {
           return next(err);
         }
       });
-      res.status(200).json(newUser);
+      res.status(200).json(req.user);
     }
   }),
 ];

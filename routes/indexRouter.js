@@ -50,6 +50,7 @@ passport.serializeUser((user, done) => {
     done(null, {
       id: user.id,
       username: user.username,
+      email: user.email,
     });
   });
 });
@@ -81,6 +82,7 @@ router.post(
   (req, res) => {
     res.json({
       message: 'Login successful',
+      user: req.user,
     });
   },
 );
