@@ -87,6 +87,20 @@ router.post(
   },
 );
 
+// GET user status for front end
+router.get('/sesson-status', (req, res) => {
+  if (req.user) {
+    res.json({
+      status: 'active',
+      user: req.user,
+    });
+  } else {
+    res.json({
+      status: 'inactive',
+    });
+  }
+});
+
 // POST logout
 router.post('/logout', (req, res, next) => {
   req.logout((err) => {
