@@ -22,6 +22,13 @@ passport.use(
           where: {
             email: email,
           },
+          include: {
+            profile: {
+              include: {
+                settings: true,
+              },
+            },
+          },
         });
         if (user === null) {
           return done(null, false, {
@@ -51,6 +58,11 @@ passport.serializeUser((user, done) => {
       id: user.id,
       username: user.username,
       email: user.email,
+      settings: {
+        background: user.profile.settings.background,
+        color: user.profile.settings.color,
+        font: user.profile.settings.font,
+      },
     });
   });
 });
@@ -80,19 +92,18 @@ router.post(
     failureMessage: true,
   }),
   (req, res) => {
-    res.json({
+    res.status(200).json({
       message: 'Login successful',
-      user: req.user,
+      user: req.session.passport.user,
     });
   },
 );
 
 // GET user status for front end
-router.get('/sesson-status', (req, res) => {
-  if (req.user) {
+router.get('/session-status', (req, res) => {
+  if (req.cookies) {
     res.json({
       status: 'active',
-      user: req.user,
     });
   } else {
     res.json({
