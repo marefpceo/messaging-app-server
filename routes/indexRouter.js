@@ -71,7 +71,7 @@ passport.deserializeUser(async (id, done) => {
   try {
     const user = await prisma.user.findUnique({
       where: {
-        id: id,
+        id: id.id,
       },
     });
     done(null, user.id);
@@ -100,15 +100,28 @@ router.post(
 );
 
 // GET user status for front end
-router.get('/session-status', (req, res) => {
-  if (req.cookies) {
-    res.json({
-      status: 'active',
-    });
-  } else {
-    res.json({
-      status: 'inactive',
-    });
+router.get('/session-status', async (req, res) => {
+  console.log(req.session.id);
+  if (req.session.id) {
+    try {
+      const session = await prisma.session.findUnique({
+        where: {
+          sid: `${req.session.id}`,
+        },
+      });
+
+      if (session === null) {
+        res.json({
+          status: 'inactive',
+        });
+      } else {
+        res.json({
+          status: 'active',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 });
 
@@ -118,7 +131,9 @@ router.post('/logout', (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.redirect('/login');
+    res.status(200).json({
+      message: 'Logged out',
+    });
   });
 });
 

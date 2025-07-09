@@ -38,7 +38,22 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 
 app.use(limiter);
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: false,
+      directives: {
+        defaultSrc: [
+          "'self'",
+          'http://localhost:3000',
+          'http://localhost:5173',
+        ],
+      },
+    },
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginOpenerPolicy: { policy: 'same-origin' },
+  }),
+);
 app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
@@ -55,7 +70,7 @@ app.use(
     },
     secret: process.env.SESSION_SECRET,
     resave: true,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: new PrismaSessionStore(new PrismaClient(), {
       checkPeriod: 2 * 60 * 1000,
       dbRecordIdIsSessionId: true,
