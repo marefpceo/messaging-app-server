@@ -131,8 +131,14 @@ router.post('/logout', (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.status(200).json({
-      message: 'Logged out',
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+        return next(err);
+      }
+      res.clearCookie('connect.sid').status(200).json({
+        message: 'Logged out',
+      });
     });
   });
 });
