@@ -117,7 +117,8 @@ router.get('/session-status', async (req, res) => {
       } else {
         res.json({
           status: 'active',
-          user: req.session.passport.user,
+          user:
+            req.session.passport === undefined ? '' : req.session.passport.user,
         });
       }
     } catch (error) {
