@@ -88,8 +88,6 @@ router.post(
   '/login',
   passport.authenticate('local', {
     failWithError: true,
-    successMessage: true,
-    failureMessage: true,
   }),
   (req, res) => {
     res.status(200).json({
