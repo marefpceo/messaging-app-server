@@ -130,7 +130,10 @@ exports.login_post = [
 
     if (!error.isEmpty()) {
       console.log(error.array());
-      res.status(402);
+      const inputError = new Error('Email or password incorrect');
+      inputError.status = 401;
+      return next(inputError);
+    } else {
       next();
     }
   }),
