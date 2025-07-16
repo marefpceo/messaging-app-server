@@ -84,8 +84,8 @@ passport.deserializeUser(async (currentUserId, done) => {
 router.post('/signup', indexController.signup_post);
 
 // POST login - Returns a status of 401 upon failure
-router.post(
-  '/login',
+router.post('/login', [
+  indexController.login_post,
   passport.authenticate('local', {
     failWithError: true,
   }),
@@ -95,7 +95,7 @@ router.post(
       user: req.session.passport.user,
     });
   },
-);
+]);
 
 // GET user status for front end
 router.get('/session-status', async (req, res) => {

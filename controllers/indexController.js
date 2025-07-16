@@ -121,8 +121,17 @@ exports.signup_post = [
   }),
 ];
 
-exports.login_get = asyncHandler(async (req, res, next) => {
-  res.json({
-    message: 'login GET route',
-  });
-});
+exports.login_post = [
+  body('email').trim().isEmail().escape(),
+  body('password').trim().isLength({ min: 9 }).escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const error = validationResult(req);
+
+    if (!error.isEmpty()) {
+      console.log(error.array());
+      res.status(402);
+      next();
+    }
+  }),
+];
