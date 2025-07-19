@@ -64,6 +64,8 @@ model Message {
   delete_timestamp  DateTime?
   conversation      Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   conversationId    Int
+  sender_read       Boolean       @default(false)
+  recipienct_read   Boolean       @default(false)
 }
 
 model Conversation {
