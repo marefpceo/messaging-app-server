@@ -45,11 +45,10 @@ exports.user_contacts_get = asyncHandler(async (req, res, next) => {
     return;
   } else {
     const contactList = checkUser.contacts.map((record) => ({
-      id: record.id,
-      conatactUserId: record.contactUserId,
-      contactFirstname: record.contactUser.firstname,
-      contactLastname: record.contactUser.lastname,
-      contactUsername: record.contactUser.username,
+      id: record.contactUserId,
+      firstname: record.contactUser.firstname,
+      lastname: record.contactUser.lastname,
+      username: record.contactUser.username,
     }));
     res.json(contactList);
   }
