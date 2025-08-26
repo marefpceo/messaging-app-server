@@ -28,11 +28,20 @@ exports.create_message_get = asyncHandler(async (req, res, next) => {
     where: {
       username: req.params.username,
     },
-    include: {
-      contacts: true,
+    select: {
+      contacts: {
+        select: {
+          contactUser: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+      },
     },
   });
-  res.json(currentUser);
+  res.json(currentUser.contacts);
 });
 
 // Handles creating a new conversation and message
