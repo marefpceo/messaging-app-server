@@ -7,16 +7,42 @@ const prisma = new PrismaClient();
 exports.conversation_list_get = asyncHandler(async (req, res, next) => {
   const conversationList = await prisma.conversation.findMany({
     where: {
+      OR: [
+        {
+          messages: {
+            every: {
+              sender: {
+                username: req.params.username,
+              },
+            },
+          },
+        },
+        {
+          messages: {
+            every: {
+              recipient: {
+                username: req.params.username,
+              },
+            },
+          },
+        },
+      ],
+    },
+    include: {
       messages: {
-        every: {
+        include: {
+          recipient: {
+            select: {
+              username: true,
+            },
+          },
           sender: {
-            username: req.params.username,
+            select: {
+              username: true,
+            },
           },
         },
       },
-    },
-    include: {
-      messages: true,
     },
   });
   res.json(conversationList);
