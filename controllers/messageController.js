@@ -3,6 +3,31 @@ const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
 
+// Returns list of messages for the selected user
+exports.message_list_get = asyncHandler(async (req, res, next) => {
+  const messageList = await prisma.message.findMany({
+    where: {
+      recipient: {
+        username: req.params.username,
+      },
+    },
+    include: {
+      sender: {
+        select: {
+          username: true,
+        },
+      },
+      conversation: {
+        select: {
+          subject: true,
+        },
+      },
+    },
+  });
+
+  res.json(messageList);
+});
+
 // Returns list of conversations for the selected user
 exports.conversation_list_get = asyncHandler(async (req, res, next) => {
   const conversationList = await prisma.conversation.findMany({

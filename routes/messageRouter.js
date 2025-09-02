@@ -4,6 +4,9 @@ const messageController = require('../controllers/messageController');
 
 /********** Message Routing **********/
 /*************************************/
+// GET message list for current user
+messageRouter.get('/:username/messages', messageController.message_list_get);
+
 // GET conversation list for current user
 messageRouter.get(
   '/:username/conversations',
