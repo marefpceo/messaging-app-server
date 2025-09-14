@@ -52,9 +52,9 @@ messageRouter.delete(
   messageController.conversation_delete,
 );
 
-// GET selected conversation message
+// GET selected message
 messageRouter.get(
-  '/:username/conversation/:conversationId/:messageId',
+  '/:username/message/:messageId',
   messageController.message_get,
 );
 

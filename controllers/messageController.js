@@ -224,7 +224,20 @@ exports.message_get = asyncHandler(async (req, res, next) => {
     where: {
       id: parseInt(req.params.messageId),
     },
+    include: {
+      conversation: {
+        select: {
+          subject: true,
+        },
+      },
+      recipient: {
+        select: {
+          username: true,
+        },
+      },
+    },
   });
+  console.log(selectedMessage);
   res.json(selectedMessage);
 });
 
