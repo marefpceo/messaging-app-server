@@ -60,7 +60,7 @@ exports.conversation_list_get = asyncHandler(async (req, res, next) => {
       OR: [
         {
           messages: {
-            every: {
+            some: {
               sender: {
                 username: req.params.username,
               },
@@ -69,7 +69,7 @@ exports.conversation_list_get = asyncHandler(async (req, res, next) => {
         },
         {
           messages: {
-            every: {
+            some: {
               recipient: {
                 username: req.params.username,
               },
