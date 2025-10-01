@@ -212,7 +212,20 @@ exports.conversation_get = asyncHandler(async (req, res, next) => {
       id: parseInt(req.params.conversationId),
     },
     include: {
-      messages: true,
+      messages: {
+        include: {
+          sender: {
+            select: {
+              username: true,
+            },
+          },
+          recipient: {
+            select: {
+              username: true,
+            },
+          },
+        },
+      },
     },
   });
   res.json(selectedConversation);
