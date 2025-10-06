@@ -186,7 +186,7 @@ exports.create_message_put = [
     } else {
       const newMessage = await prisma.conversation.update({
         where: {
-          id: parseInt(req.body.newConversationId),
+          id: parseInt(req.body.conversationId),
         },
         data: {
           messages: {
