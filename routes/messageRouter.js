@@ -59,8 +59,8 @@ messageRouter.get(
 );
 
 // DELETE message
-messageRouter.delete(
-  '/:username/conversation/:conversationId/:messageId',
+messageRouter.put(
+  '/:username/message/delete',
   messageController.message_delete,
 );
 

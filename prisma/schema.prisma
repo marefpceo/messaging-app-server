@@ -54,10 +54,10 @@ model Settings {
 
 model Message {
   id                Int           @id @default(autoincrement())
-  sender            User          @relation("sender", fields: [senderId], references: [id])
-  senderId          Int
-  recipient         User          @relation("recipient", fields: [recipientId], references: [id])
-  recipientId       Int    
+  sender            User?          @relation("sender", fields: [senderId], references: [id])
+  senderId          Int?
+  recipient         User?          @relation("recipient", fields: [recipientId], references: [id])
+  recipientId       Int?    
   context           String
   createdAt         DateTime      @default(now())
   delete_ready      Boolean       @default(false)

@@ -213,6 +213,9 @@ exports.conversation_get = asyncHandler(async (req, res, next) => {
     },
     include: {
       messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
         include: {
           sender: {
             select: {
@@ -256,17 +259,37 @@ exports.message_get = asyncHandler(async (req, res, next) => {
 
 // Handles deleted a message. Message is not deleted immediatly but instead marked for deletion
 exports.message_delete = asyncHandler(async (req, res, next) => {
-  const messageToDelete = await prisma.message.update({
+  const userId = parseInt(req.body.userId);
+  const messageIdList = req.body.messageIdList.map(Number);
+  const messageToDelete = await prisma.message.updateMany({
     where: {
-      id: parseInt(req.params.messageId),
+      id: {
+        in: messageIdList,
+      },
+      // AND: [
+      //   {
+      //     OR: [
+      //       {
+      //         recipientId: parseInt(req.body.userId),
+      //       },
+      //       {
+      //         senderId: parseInt(req.body.userId),
+      //       }
+      //     ]
+      //   }
+      // ]
     },
     data: {
-      delete_ready: true,
-      delete_timestamp: new Date().toISOString(),
+      // delete_ready: true,
+      recipientId: null,
+      // ...(userId === prisma.message.fields.recipientId ? { recipientId: null } : {}),
+      // ...(userId === prisma.message.fields.senderId ? { senderId: null } : {}),
+      // delete_timestamp: new Date().toISOString(),
     },
   });
+  console.log(messageIdList);
   res.json({
-    message: `Message ${messageToDelete.id} moved to trash`,
+    message: `Message ${messageToDelete} moved to trash`,
   });
 });
 
