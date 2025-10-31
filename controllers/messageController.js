@@ -258,46 +258,43 @@ exports.message_get = asyncHandler(async (req, res, next) => {
 });
 
 // Handles deleted a message. Message is not deleted immediatly but instead marked for deletion
-// Prisma ORM does not support updating 2 categories conditionally. Need to run 2 seperate queries
-
 exports.message_delete = asyncHandler(async (req, res, next) => {
   const userId = parseInt(req.body.userId);
   const messageIdList = req.body.messageIdList.map(Number);
+  const messagesToDelete = await prisma.message.findMany({
+    where: {
+      id: {
+        in: messageIdList,
+      },
+    },
+  });
 
-  const result = await prisma.$transaction([
-    prisma.message.updateMany({
-      where: {
-        id: {
-          in: messageIdList,
+  for (const message of messagesToDelete) {
+    if (message.recipientId === userId) {
+      await prisma.message.update({
+        where: {
+          id: message.id,
         },
-        AND: [
-          {
-            recipientId: userId,
-          },
-        ],
-      },
-      data: {
-        recipientId: null,
-      },
-    }),
+        data: {
+          recipientId: null,
+        },
+      });
+    }
+  }
 
-    prisma.message.updateMany({
-      where: {
-        id: {
-          in: messageIdList,
+  for (const message of messagesToDelete) {
+    if (message.senderId === userId) {
+      await prisma.message.update({
+        where: {
+          id: message.id,
         },
-        AND: [
-          {
-            senderId: userId,
-          },
-        ],
-      },
-      data: {
-        senderId: null,
-      },
-    }),
-  ]);
-  console.log(result);
+        data: {
+          senderId: null,
+        },
+      });
+    }
+  }
+
   res.json({
     message: `Messages moved to trash`,
   });
