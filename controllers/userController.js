@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
+const { convertEscape } = require('../helpers/convertEscape');
 
 exports.edit_profile_get = asyncHandler(async (req, res, next) => {
   const userProfile = await prisma.user.findUnique({
@@ -23,7 +24,7 @@ exports.edit_profile_get = asyncHandler(async (req, res, next) => {
     username: userProfile.username,
     date_of_birth: userProfile.date_of_birth,
     email: userProfile.email,
-    bio: userProfile.profile.bio,
+    bio: convertEscape(userProfile.profile.bio),
     background: userProfile.profile.settings.background,
     font: userProfile.profile.settings.font,
     color: userProfile.profile.settings.color,
