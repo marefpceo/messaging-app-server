@@ -2,6 +2,10 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
+const {
+  cleanMessageArray,
+  cleanSelectedConversation,
+} = require('../helpers/messageFilters');
 
 // Returns list of received messages for the selected user
 exports.message_received_list_get = asyncHandler(async (req, res, next) => {
@@ -96,12 +100,11 @@ exports.conversation_list_get = asyncHandler(async (req, res, next) => {
     },
   });
 
-  // Need function to filter out records with null senderId and recipientId
-  const filteredList = conversationList.filter((obj) => {
-    return obj.messages.every((message) => {
-      return message.recipientId !== null;
-    });
-  });
+  const filteredList = cleanMessageArray(
+    conversationList,
+    'senderId',
+    'recipientId',
+  );
 
   res.json(filteredList);
 });
@@ -239,7 +242,10 @@ exports.conversation_get = asyncHandler(async (req, res, next) => {
       },
     },
   });
-  res.json(selectedConversation);
+
+  const filtered = cleanSelectedConversation(selectedConversation);
+
+  res.json(filtered);
 });
 
 // Gets selected message
