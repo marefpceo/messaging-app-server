@@ -95,7 +95,15 @@ exports.conversation_list_get = asyncHandler(async (req, res, next) => {
       },
     },
   });
-  res.json(conversationList);
+
+  // Need function to filter out records with null senderId and recipientId
+  const filteredList = conversationList.filter((obj) => {
+    return obj.messages.every((message) => {
+      return message.recipientId !== null;
+    });
+  });
+
+  res.json(filteredList);
 });
 
 // Returns current user info needed to create a new message
