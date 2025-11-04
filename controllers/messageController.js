@@ -267,7 +267,6 @@ exports.message_get = asyncHandler(async (req, res, next) => {
       },
     },
   });
-  console.log(selectedMessage);
   res.json(selectedMessage);
 });
 
