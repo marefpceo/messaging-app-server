@@ -123,11 +123,11 @@ exports.signup_post = [
       req.login(newUser, (err) => {
         if (err) {
           return next(err);
+        } else {
+          res.status(200).json({
+            message: 'Login successful',
+          });
         }
-      });
-      res.status(200).json({
-        message: 'Login successful',
-        user: req.session.passport.user,
       });
     }
   }),
