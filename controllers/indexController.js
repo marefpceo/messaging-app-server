@@ -107,6 +107,18 @@ exports.signup_post = [
             },
           },
         },
+        include: {
+          contacts: {
+            include: {
+              user: true,
+            },
+          },
+          profile: {
+            include: {
+              settings: true,
+            },
+          },
+        },
       });
       req.login(newUser, (err) => {
         if (err) {
