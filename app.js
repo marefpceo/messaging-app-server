@@ -44,7 +44,12 @@ app.use(
       useDefaults: false,
       directives: {
         defaultSrc: [
-          "'self'",
+          /http:\/\/localhost:3000/,
+          /http:\/\/localhost:5173/,
+          /http:\/\/localhost:4173/,
+          /.*\.railway.app.*/,
+        ],
+        scriptSrc: [
           /http:\/\/localhost:3000/,
           /http:\/\/localhost:5173/,
           /http:\/\/localhost:4173/,
