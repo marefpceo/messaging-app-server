@@ -47,12 +47,12 @@ app.use(
           "'self'",
           'http://localhost:3000',
           'http://localhost:5173',
-          '/.*\.railway.app.*/',
+          /.*\.railway.app.*/,
         ],
       },
     },
     crossOriginResourcePolicy: { policy: 'cross-origin' },
-    crossOriginOpenerPolicy: { policy: 'cross-origin' },
+    crossOriginOpenerPolicy: { policy: 'same-origin' },
   }),
 );
 app.use(cors(corsOptions));
