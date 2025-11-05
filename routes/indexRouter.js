@@ -90,6 +90,7 @@ router.post('/login', [
     failWithError: true,
   }),
   (req, res) => {
+    req.login();
     res.status(200).json({
       message: 'Login successful',
       user: req.session.passport.user,
