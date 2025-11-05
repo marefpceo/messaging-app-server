@@ -52,7 +52,7 @@ app.use(
       },
     },
     crossOriginResourcePolicy: { policy: 'cross-origin' },
-    crossOriginOpenerPolicy: { policy: 'same-origin' },
+    crossOriginOpenerPolicy: { policy: 'cross-origin' },
   }),
 );
 app.use(cors(corsOptions));
