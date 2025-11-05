@@ -89,11 +89,16 @@ router.post('/login', [
   passport.authenticate('local', {
     failWithError: true,
   }),
-  (req, res) => {
-    req.login();
-    res.status(200).json({
-      message: 'Login successful',
-      user: req.session.passport.user,
+  (req, res, next) => {
+    req.login(user, (err) => {
+      if (err) {
+        return next(err);
+      } else {
+        res.status(200).json({
+          message: 'Login successful',
+          user: req.session.passport.user,
+        });
+      }
     });
   },
 ]);
