@@ -47,6 +47,7 @@ app.use(
           "'self'",
           'http://localhost:3000',
           'http://localhost:5173',
+          'http://localhost:4173',
           /.*\.railway.app.*/,
         ],
       },
@@ -67,7 +68,7 @@ app.use(
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       secure: process.env.NODE_ENV === 'production' ? true : false,
-      sameSite: process.env.NODE_ENV === 'development' ? 'none' : 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
     },
     secret: process.env.SESSION_SECRET,
     resave: true,
