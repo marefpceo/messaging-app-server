@@ -2,24 +2,111 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const { PrismaClient } = require('../generated/prisma');
 const prisma = new PrismaClient();
+const {
+  cleanMessageArray,
+  cleanSelectedConversation,
+} = require('../helpers/messageFilters');
 
-// Returns list of conversations for the selecte user
+// Returns list of received messages for the selected user
+exports.message_received_list_get = asyncHandler(async (req, res, next) => {
+  const messageReceivedList = await prisma.message.findMany({
+    where: {
+      recipient: {
+        username: req.params.username,
+      },
+    },
+    include: {
+      sender: {
+        select: {
+          username: true,
+        },
+      },
+      conversation: {
+        select: {
+          subject: true,
+        },
+      },
+    },
+  });
+
+  res.json(messageReceivedList);
+});
+
+// Returns list of sent messages for the selected user
+exports.message_sent_list_get = asyncHandler(async (req, res, next) => {
+  const messageSentList = await prisma.message.findMany({
+    where: {
+      sender: {
+        username: req.params.username,
+      },
+    },
+    include: {
+      recipient: {
+        select: {
+          username: true,
+        },
+      },
+      conversation: {
+        select: {
+          subject: true,
+        },
+      },
+    },
+  });
+
+  res.json(messageSentList);
+});
+
+// Returns list of conversations for the selected user
 exports.conversation_list_get = asyncHandler(async (req, res, next) => {
   const conversationList = await prisma.conversation.findMany({
     where: {
+      OR: [
+        {
+          messages: {
+            some: {
+              sender: {
+                username: req.params.username,
+              },
+            },
+          },
+        },
+        {
+          messages: {
+            some: {
+              recipient: {
+                username: req.params.username,
+              },
+            },
+          },
+        },
+      ],
+    },
+    include: {
       messages: {
-        every: {
+        include: {
+          recipient: {
+            select: {
+              username: true,
+            },
+          },
           sender: {
-            username: req.params.username,
+            select: {
+              username: true,
+            },
           },
         },
       },
     },
-    include: {
-      messages: true,
-    },
   });
-  res.json(conversationList);
+
+  const filteredList = cleanMessageArray(
+    conversationList,
+    'senderId',
+    'recipientId',
+  );
+
+  res.json(filteredList);
 });
 
 // Returns current user info needed to create a new message
@@ -28,11 +115,20 @@ exports.create_message_get = asyncHandler(async (req, res, next) => {
     where: {
       username: req.params.username,
     },
-    include: {
-      contacts: true,
+    select: {
+      contacts: {
+        select: {
+          contactUser: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+      },
     },
   });
-  res.json(currentUser);
+  res.json(currentUser.contacts);
 });
 
 // Handles creating a new conversation and message
@@ -101,7 +197,7 @@ exports.create_message_put = [
     } else {
       const newMessage = await prisma.conversation.update({
         where: {
-          id: parseInt(req.body.newConversationId),
+          id: parseInt(req.body.conversationId),
         },
         data: {
           messages: {
@@ -127,10 +223,29 @@ exports.conversation_get = asyncHandler(async (req, res, next) => {
       id: parseInt(req.params.conversationId),
     },
     include: {
-      messages: true,
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+        include: {
+          sender: {
+            select: {
+              username: true,
+            },
+          },
+          recipient: {
+            select: {
+              username: true,
+            },
+          },
+        },
+      },
     },
   });
-  res.json(selectedConversation);
+
+  const filtered = cleanSelectedConversation(selectedConversation);
+
+  res.json(filtered);
 });
 
 // Gets selected message
@@ -139,23 +254,62 @@ exports.message_get = asyncHandler(async (req, res, next) => {
     where: {
       id: parseInt(req.params.messageId),
     },
+    include: {
+      conversation: {
+        select: {
+          subject: true,
+        },
+      },
+      recipient: {
+        select: {
+          username: true,
+        },
+      },
+    },
   });
   res.json(selectedMessage);
 });
 
 // Handles deleted a message. Message is not deleted immediatly but instead marked for deletion
 exports.message_delete = asyncHandler(async (req, res, next) => {
-  const messageToDelete = await prisma.message.update({
+  const userId = parseInt(req.body.userId);
+  const messageIdList = req.body.messageIdList.map(Number);
+  const messagesToDelete = await prisma.message.findMany({
     where: {
-      id: parseInt(req.params.messageId),
-    },
-    data: {
-      delete_ready: true,
-      delete_timestamp: new Date().toISOString(),
+      id: {
+        in: messageIdList,
+      },
     },
   });
+
+  for (const message of messagesToDelete) {
+    if (message.recipientId === userId) {
+      await prisma.message.update({
+        where: {
+          id: message.id,
+        },
+        data: {
+          recipientId: null,
+        },
+      });
+    }
+  }
+
+  for (const message of messagesToDelete) {
+    if (message.senderId === userId) {
+      await prisma.message.update({
+        where: {
+          id: message.id,
+        },
+        data: {
+          senderId: null,
+        },
+      });
+    }
+  }
+
   res.json({
-    message: `Message ${messageToDelete.id} moved to trash`,
+    message: `Messages moved to trash`,
   });
 });
 

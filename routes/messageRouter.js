@@ -4,6 +4,18 @@ const messageController = require('../controllers/messageController');
 
 /********** Message Routing **********/
 /*************************************/
+// GET received message list for current user
+messageRouter.get(
+  '/:username/messages_received',
+  messageController.message_received_list_get,
+);
+
+// GET sent message list for current user
+messageRouter.get(
+  '/:username/messages_sent',
+  messageController.message_sent_list_get,
+);
+
 // GET conversation list for current user
 messageRouter.get(
   '/:username/conversations',
@@ -40,15 +52,15 @@ messageRouter.delete(
   messageController.conversation_delete,
 );
 
-// GET selected conversation message
+// GET selected message
 messageRouter.get(
-  '/:username/conversation/:conversationId/:messageId',
+  '/:username/message/:messageId',
   messageController.message_get,
 );
 
 // DELETE message
-messageRouter.delete(
-  '/:username/conversation/:conversationId/:messageId',
+messageRouter.put(
+  '/:username/message/delete',
   messageController.message_delete,
 );
 

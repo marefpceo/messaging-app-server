@@ -9,12 +9,14 @@ exports.signup_post = [
   body('firstname')
     .trim()
     .isLength({ min: 3 })
+    .withMessage('First Name must be at least 3 characters')
     .isAlphanumeric()
     .withMessage('Only alphanumeric characters allowed')
     .escape(),
   body('lastname')
     .trim()
     .isLength({ min: 3 })
+    .withMessage('Last Name must be at least 3 characters')
     .isAlphanumeric()
     .withMessage('Only alphanumeric characters allowed')
     .escape(),
@@ -34,10 +36,11 @@ exports.signup_post = [
       }
     })
     .withMessage('Username already in use'),
-  body('date_of_birth').trim().isDate({ format: 'YYYY-MM-DD' }),
+  body('date_of_birth').trim().notEmpty().withMessage('Date of Birth required'),
   body('email')
     .trim()
     .isEmail()
+    .withMessage('Email format invalid. (ex. user@email.com')
     .escape()
     .custom(async (value) => {
       const emailCheck = await prisma.user.findUnique({
@@ -55,13 +58,30 @@ exports.signup_post = [
     .isLength({ min: 9 })
     .withMessage('Password must contain a minimum of 9 characters')
     .escape(),
+  body('confirmPassword')
+    .trim()
+    .custom((value, { req }) => {
+      if (value != req.body.password) {
+        throw new Error('Passwords do not match');
+      }
+      return true;
+    }),
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
-
+    const formData = {
+      firstname: req.body.firstname,
+      lastname: req.body.lastname,
+      username: req.body.username,
+      date_of_birth: req.body.date_of_birth,
+      email: req.body.email,
+      password: req.body.password,
+      confirmPassword: req.body.confirmPassword,
+    };
     if (!errors.isEmpty()) {
-      res.status(200).json({
-        errors: errors.mapped(),
+      res.status(400).json({
+        formData,
+        errors: errors.array(),
       });
       return;
     } else {
@@ -87,14 +107,46 @@ exports.signup_post = [
             },
           },
         },
+        include: {
+          contacts: {
+            include: {
+              user: true,
+            },
+          },
+          profile: {
+            include: {
+              settings: true,
+            },
+          },
+        },
       });
-      res.json(newUser);
+      req.login(newUser, (err) => {
+        if (err) {
+          return next(err);
+        } else {
+          res.status(200).json({
+            message: 'Login successful',
+          });
+        }
+      });
     }
   }),
 ];
 
-exports.login_get = asyncHandler(async (req, res, next) => {
-  res.json({
-    message: 'login GET route',
-  });
-});
+exports.login_post = [
+  body('email').trim().isEmail().escape(),
+  body('password').trim().isLength({ min: 9 }).escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const error = validationResult(req);
+
+    if (!error.isEmpty()) {
+      console.log(error.array());
+      const inputError = new Error('Email or password incorrect');
+      inputError.status = 401;
+      return next(inputError);
+    } else {
+      next();
+    }
+  }),
+];

@@ -5,17 +5,16 @@ const prisma = new PrismaClient();
 // GET global list of all contacts
 exports.contacts_get = asyncHandler(async (req, res, next) => {
   const verifyList = await prisma.user.findMany({
-    include: {
-      profile: {
-        include: {
-          settings: true,
-        },
-      },
+    select: {
+      id: true,
+      firstname: true,
+      lastname: true,
+      username: true,
     },
   });
 
   if (!verifyList) {
-    res.status(404).json({
+    res.status(200).json({
       message: 'Not found',
     });
   } else {
@@ -32,6 +31,7 @@ exports.user_contacts_get = asyncHandler(async (req, res, next) => {
     include: {
       contacts: {
         include: {
+          contactUser: true,
           user: true,
         },
       },
@@ -39,15 +39,16 @@ exports.user_contacts_get = asyncHandler(async (req, res, next) => {
   });
 
   if (checkUser === null) {
-    res.status(404).json({
+    res.status(200).json({
       message: 'User not found',
     });
     return;
   } else {
     const contactList = checkUser.contacts.map((record) => ({
-      userId: record.userId,
-      username: record.user.username,
-      id: record.id,
+      id: record.contactUserId,
+      firstname: record.contactUser.firstname,
+      lastname: record.contactUser.lastname,
+      username: record.contactUser.username,
     }));
     res.json(contactList);
   }

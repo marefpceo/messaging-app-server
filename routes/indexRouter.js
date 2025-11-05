@@ -22,6 +22,13 @@ passport.use(
           where: {
             email: email,
           },
+          include: {
+            profile: {
+              include: {
+                settings: true,
+              },
+            },
+          },
         });
         if (user === null) {
           return done(null, false, {
@@ -50,15 +57,21 @@ passport.serializeUser((user, done) => {
     done(null, {
       id: user.id,
       username: user.username,
+      email: user.email,
+      settings: {
+        background: user.profile.settings.background,
+        color: user.profile.settings.color,
+        font: user.profile.settings.font,
+      },
     });
   });
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (currentUserId, done) => {
   try {
     const user = await prisma.user.findUnique({
       where: {
-        id: id,
+        id: currentUserId.id,
       },
     });
     done(null, user.id);
@@ -73,17 +86,48 @@ router.post('/signup', indexController.signup_post);
 // POST login - Returns a status of 401 upon failure
 router.post(
   '/login',
-  passport.authenticate('local', {
-    failWithError: true,
-    successMessage: true,
-    failureMessage: true,
-  }),
+  [
+    indexController.login_post,
+    passport.authenticate('local', {
+      failWithError: true,
+    }),
+  ],
+
   (req, res) => {
-    res.json({
+    res.status(200).json({
       message: 'Login successful',
+      user: req.session.passport.user,
     });
   },
 );
+
+// GET user status for front end
+router.get('/session-status', async (req, res) => {
+  console.log(req.session.id);
+  if (req.session.id) {
+    try {
+      const session = await prisma.session.findUnique({
+        where: {
+          sid: `${req.session.id}`,
+        },
+      });
+
+      if (session === null) {
+        res.json({
+          status: 'inactive',
+        });
+      } else {
+        res.json({
+          status: 'active',
+          user:
+            req.session.passport === undefined ? '' : req.session.passport.user,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+});
 
 // POST logout
 router.post('/logout', (req, res, next) => {
@@ -91,7 +135,15 @@ router.post('/logout', (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.redirect('/login');
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+        return next(err);
+      }
+      res.clearCookie('connect.sid').status(200).json({
+        message: 'Logged out',
+      });
+    });
   });
 });
 
