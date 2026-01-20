@@ -7,6 +7,10 @@ const {
   cleanSelectedConversation,
 } = require('../helpers/messageFilters');
 
+/**----------------------------------------------------**/
+/**----------------------------------------------------**/
+/**----------------------------------------------------**/
+// TODO update to return all messages (sent/received) for selected user
 // Returns list of received messages for the selected user
 exports.message_received_list_get = asyncHandler(async (req, res, next) => {
   const messageReceivedList = await prisma.message.findMany({
@@ -32,6 +36,7 @@ exports.message_received_list_get = asyncHandler(async (req, res, next) => {
   res.json(messageReceivedList);
 });
 
+// TODO **********************************REMOVE**********************************
 // Returns list of sent messages for the selected user
 exports.message_sent_list_get = asyncHandler(async (req, res, next) => {
   const messageSentList = await prisma.message.findMany({
@@ -57,6 +62,7 @@ exports.message_sent_list_get = asyncHandler(async (req, res, next) => {
   res.json(messageSentList);
 });
 
+// TODO **********************************REMOVE**********************************
 // Returns list of conversations for the selected user
 exports.conversation_list_get = asyncHandler(async (req, res, next) => {
   const conversationList = await prisma.conversation.findMany({
@@ -131,12 +137,13 @@ exports.create_message_get = asyncHandler(async (req, res, next) => {
   res.json(currentUser.contacts);
 });
 
+// TODO removing conversation model. Update to reflect changes
 // Handles creating a new conversation and message
 exports.create_message_post = [
   body('subject')
     .trim()
     .isLength({ min: 3, max: 35 })
-    .withMessage('Subject line must be betweem 3 and 35 characters!')
+    .withMessage('Subject line must be between 3 and 35 characters!')
     .escape(),
   body('context')
     .trim()
@@ -178,6 +185,7 @@ exports.create_message_post = [
   }),
 ];
 
+// TODO removing conversation model. Update to reflect changes.
 // Handles creating new message by updating selected conversation
 exports.create_message_put = [
   body('context')
@@ -216,6 +224,8 @@ exports.create_message_put = [
   }),
 ];
 
+// TODO **********************************REMOVE**********************************
+// Removing Conversation model
 // Gets selected conversation and messages
 exports.conversation_get = asyncHandler(async (req, res, next) => {
   const selectedConversation = await prisma.conversation.findUnique({
@@ -313,6 +323,8 @@ exports.message_delete = asyncHandler(async (req, res, next) => {
   });
 });
 
+// TODO **********************************REMOVE**********************************
+// Removing Conversation model
 exports.conversation_delete = asyncHandler(async (req, res, next) => {
   const conversationToDelete = await prisma.conversation.delete({
     where: {
