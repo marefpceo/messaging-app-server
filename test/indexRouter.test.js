@@ -1,3 +1,4 @@
+require('dotenv').config();
 const indexRouter = require('../routes/indexRouter');
 
 const { PrismaClient } = require('../generated/prisma');
@@ -80,6 +81,27 @@ describe('Test signup route to create a new user', () => {
       .set('Accept', 'x-www-form-urlencoded');
     expect(response.status).toBe(400);
     expect(response.body.errors.email.msg).toEqual('Email already in use');
+  });
+
+  // Test create new user duplicate username
+  test('POST signup username in use', async () => {
+    const testUser = {
+      firstname: 'Fnametest',
+      lastname: 'Lnametest',
+      username: 'flname12',
+      date_of_birth: '2025-05-13',
+      email: 'flname@test2.com',
+      password: 'kkkkkkkkk',
+      confirmPassword: 'kkkkkkkkk',
+    };
+    const response = await request(app)
+      .post('/signup')
+      .send(testUser)
+      .set('Accept', 'x-www-form-urlencoded');
+    expect(response.status).toBe(400);
+    expect(response.body.errors.username.msg).toEqual(
+      'Username already in use',
+    );
   });
 
   const testUserLogin = {
