@@ -1,7 +1,13 @@
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
+
 const { PrismaClient } = require('../generated/prisma');
-const prisma = new PrismaClient();
+const { PrismaPg } = require('@prisma/adapter-pg');
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+const prisma = new PrismaClient({ adapter });
+
 const {
   cleanMessageArray,
   cleanSelectedConversation,
