@@ -1,6 +1,11 @@
 const userRouter = require('../routes/userRouter');
 const { PrismaClient } = require('../generated/prisma');
-const prisma = new PrismaClient();
+const { PrismaPg } = require('@prisma/adapter-pg');
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+const prisma = new PrismaClient({ adapter });
 
 const request = require('supertest');
 const express = require('express');
