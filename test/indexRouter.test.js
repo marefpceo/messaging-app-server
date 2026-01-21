@@ -1,6 +1,13 @@
 const indexRouter = require('../routes/indexRouter');
+
 const { PrismaClient } = require('../generated/prisma');
-const prisma = new PrismaClient();
+const { PrismaPg } = require('@prisma/adapter-pg');
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+const prisma = new PrismaClient({ adapter });
+
 const argon2 = require('argon2');
 
 const request = require('supertest');
@@ -28,6 +35,7 @@ describe('Test signup route to create a new user', () => {
       date_of_birth: '2025-05-13',
       email: 'flname@test.com',
       password: 'kkkkkkkkk',
+      confirmPassword: 'kkkkkkkkk',
     };
 
     const response = await request(app)
@@ -43,7 +51,7 @@ describe('Test signup route to create a new user', () => {
     expect(verifiedHash).toBeTruthy;
     expect(response.status).toEqual(200);
     expect(response.body).toEqual({
-      id: expect.anything(Number),
+      id: expect.any(Number),
       firstname: 'Fnametest',
       lastname: 'Lnametest',
       username: 'flname12',
@@ -64,12 +72,13 @@ describe('Test signup route to create a new user', () => {
       date_of_birth: '2025-05-13',
       email: 'flname@test.com',
       password: 'kkkkkkkkk',
+      confirmPassword: 'kkkkkkkkk',
     };
     const response = await request(app)
       .post('/signup')
       .send(testUser)
       .set('Accept', 'x-www-form-urlencoded');
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(400);
     expect(response.body.errors.email.msg).toEqual('Email already in use');
   });
 
@@ -78,7 +87,7 @@ describe('Test signup route to create a new user', () => {
     password: 'kkkkkkkkk',
   };
   // Test POST login routes
-  test('POST login succesful', async () => {
+  test('POST login successful', async () => {
     const response = await request(app)
       .post('/login')
       .send({ email: testUserLogin.email, password: testUserLogin.password })
@@ -89,12 +98,12 @@ describe('Test signup route to create a new user', () => {
   test('POST login incorrect password', async () => {
     const response = await request(app)
       .post('/login')
-      .send({ email: testUserLogin.email, password: 'incorrctPassword' })
+      .send({ email: testUserLogin.email, password: 'incorrectPassword' })
       .set('Accept', 'x-www-form-urlencoded');
     expect(response.status).toBe(401);
   });
 
-  test('POST login incorrct email', async () => {
+  test('POST login incorrect email', async () => {
     const response = await request(app)
       .post('/login')
       .send({ email: 'incorrect@email.com', password: testUserLogin.password })
