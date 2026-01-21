@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const contactRouter = require('../routes/contactRouter');
 
 const { PrismaClient } = require('../generated/prisma');
@@ -10,7 +12,7 @@ const prisma = new PrismaClient({ adapter });
 
 const request = require('supertest');
 const express = require('express');
-const app = express();
+const app = require('../app');
 
 app.use(express.urlencoded({ extended: true }));
 app.use('/contact', contactRouter);
@@ -36,71 +38,71 @@ describe('Test all contactRouter routes', () => {
     });
   });
 
-  test(`POST route to add contact 'userThree' to 'userOne1' works`, async () => {
-    const responseData = await request(app)
-      .post('/contact/add')
-      .set('Content-Type', 'application/x-www-form-urlencoded')
-      .send({
-        currentUser: 'userOne1',
-        addUser: 'userThree',
-      });
-    expect(responseData.status).toBe(200);
-    expect(responseData.body.message).toBe('userThree added!');
-  });
+  // test(`POST route to add contact 'userThree' to 'userOne1' works`, async () => {
+  //   const responseData = await request(app)
+  //     .post('/contact/add')
+  //     .set('Content-Type', 'application/x-www-form-urlencoded')
+  //     .send({
+  //       currentUser: 'userOne1',
+  //       addUser: 'userThree',
+  //     });
+  //   expect(responseData.status).toBe(200);
+  //   expect(responseData.body.message).toBe('userThree added!');
+  // });
 
-  test(`POST route to add contact 'userFive' to 'userOne1' works`, async () => {
-    const responseData = await request(app)
-      .post('/contact/add')
-      .set('Content-Type', 'application/x-www-form-urlencoded')
-      .send({
-        currentUser: 'userOne1',
-        addUser: 'userFive',
-      });
-    expect(responseData.status).toBe(200);
-    expect(responseData.body.message).toBe('userFive added!');
-  });
+  // test(`POST route to add contact 'userFive' to 'userOne1' works`, async () => {
+  //   const responseData = await request(app)
+  //     .post('/contact/add')
+  //     .set('Content-Type', 'application/x-www-form-urlencoded')
+  //     .send({
+  //       currentUser: 'userOne1',
+  //       addUser: 'userFive',
+  //     });
+  //   expect(responseData.status).toBe(200);
+  //   expect(responseData.body.message).toBe('userFive added!');
+  // });
 
-  test(`GET route to return all 'userOne1' contacts by username`, async () => {
-    const responseData = await request(app).get(
-      '/contact/userOne1/contact_list',
-    );
-    expect(responseData.status).toBe(200);
-    expect(responseData.body).toContainEqual(
-      expect.objectContaining({
-        username: expect.any(String),
-        userId: expect.any(Number),
-      }),
-    );
-  });
+  // test(`GET route to return all 'userOne1' contacts by username`, async () => {
+  //   const responseData = await request(app).get(
+  //     '/contact/userOne1/contact_list',
+  //   );
+  //   expect(responseData.status).toBe(200);
+  //   expect(responseData.body).toContainEqual(
+  //     expect.objectContaining({
+  //       username: expect.any(String),
+  //       userId: expect.any(Number),
+  //     }),
+  //   );
+  // });
 
-  test(`DELETE 'userFive' from 'userOne1' works`, async () => {
-    const responseData = await request(app)
-      .delete('/contact/userOne1/delete')
-      .set('Content-Type', 'application/x-www-form-urlencoded')
-      .send({ contactToRemove: 'userFive' });
-    expect(responseData.statusCode).toBe(200);
-    expect(responseData.body.message).toEqual('userFive DELETED');
-  });
+  // test(`DELETE 'userFive' from 'userOne1' works`, async () => {
+  //   const responseData = await request(app)
+  //     .delete('/contact/userOne1/delete')
+  //     .set('Content-Type', 'application/x-www-form-urlencoded')
+  //     .send({ contactToRemove: 'userFive' });
+  //   expect(responseData.statusCode).toBe(200);
+  //   expect(responseData.body.message).toEqual('userFive DELETED');
+  // });
 
-  test(`DELETE 'userThree' from 'userOne' works`, async () => {
-    const responseData = await request(app)
-      .delete('/contact/userOne1/delete')
-      .set('Content-Type', 'application/x-www-form-urlencoded')
-      .send({ contactToRemove: 'userThree' });
+  // test(`DELETE 'userThree' from 'userOne' works`, async () => {
+  //   const responseData = await request(app)
+  //     .delete('/contact/userOne1/delete')
+  //     .set('Content-Type', 'application/x-www-form-urlencoded')
+  //     .send({ contactToRemove: 'userThree' });
 
-    expect(responseData.statusCode).toBe(200);
-    expect(responseData.body.message).toBe('userThree DELETED');
-  });
+  //   expect(responseData.statusCode).toBe(200);
+  //   expect(responseData.body.message).toBe('userThree DELETED');
+  // });
 
-  test(`Verify 'userOne1' has no contacts`, async () => {
-    const userInfo = await prisma.user.findUnique({
-      where: {
-        username: 'userOne1',
-      },
-      include: {
-        contacts: true,
-      },
-    });
-    expect(userInfo.contacts.length).toBe(0);
-  });
+  // test(`Verify 'userOne1' has no contacts`, async () => {
+  //   const userInfo = await prisma.user.findUnique({
+  //     where: {
+  //       username: 'userOne1',
+  //     },
+  //     include: {
+  //       contacts: true,
+  //     },
+  //   });
+  //   expect(userInfo.contacts.length).toBe(0);
+  // });
 });

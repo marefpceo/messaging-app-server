@@ -5,33 +5,8 @@ const messageController = require('../controllers/messageController');
 /********** Message Routing **********/
 /*************************************/
 
-/**----------------------------------------------------**/
-/**----------------------------------------------------**/
-/**----------------------------------------------------**/
-
-// TODO condense to one route and process on the front end
-// TODO removing Conversation model from schema
-// GET received message list for current user
-messageRouter.get(
-  '/:username/messages_received',
-  messageController.message_received_list_get,
-);
-
-// GET sent message list for current user
-messageRouter.get(
-  '/:username/messages_sent',
-  messageController.message_sent_list_get,
-);
-
-// GET conversation list for current user
-messageRouter.get(
-  '/:username/conversations',
-  messageController.conversation_list_get,
-);
-
-/**----------------------------------------------------**/
-/**----------------------------------------------------**/
-/**----------------------------------------------------**/
+// GET all messages for current user (sent & received)
+messageRouter.get('/:username/messages', messageController.messages_get);
 
 // GET create new message
 messageRouter.get(

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const userRouter = require('../routes/userRouter');
 const { PrismaClient } = require('../generated/prisma');
 const { PrismaPg } = require('@prisma/adapter-pg');

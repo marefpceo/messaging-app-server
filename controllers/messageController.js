@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 
 const { PrismaClient } = require('../generated/prisma');
 const { PrismaPg } = require('@prisma/adapter-pg');
+
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });
@@ -13,112 +14,26 @@ const {
   cleanSelectedConversation,
 } = require('../helpers/messageFilters');
 
-/**----------------------------------------------------**/
-/**----------------------------------------------------**/
-/**----------------------------------------------------**/
-// TODO update to return all messages (sent/received) for selected user
-// Returns list of received messages for the selected user
-exports.message_received_list_get = asyncHandler(async (req, res, next) => {
-  const messageReceivedList = await prisma.message.findMany({
+// Returns all user messages (sent & received)
+exports.messages_get = asyncHandler(async (req, res, next) => {
+  const currentUser = await prisma.user.findUnique({
     where: {
-      recipient: {
-        username: req.params.username,
-      },
-    },
-    include: {
-      sender: {
-        select: {
-          username: true,
-        },
-      },
-      conversation: {
-        select: {
-          subject: true,
-        },
-      },
+      username: req.params.username,
     },
   });
-
-  res.json(messageReceivedList);
-});
-
-// TODO **********************************REMOVE**********************************
-// Returns list of sent messages for the selected user
-exports.message_sent_list_get = asyncHandler(async (req, res, next) => {
-  const messageSentList = await prisma.message.findMany({
-    where: {
-      sender: {
-        username: req.params.username,
-      },
-    },
-    include: {
-      recipient: {
-        select: {
-          username: true,
-        },
-      },
-      conversation: {
-        select: {
-          subject: true,
-        },
-      },
-    },
-  });
-
-  res.json(messageSentList);
-});
-
-// TODO **********************************REMOVE**********************************
-// Returns list of conversations for the selected user
-exports.conversation_list_get = asyncHandler(async (req, res, next) => {
-  const conversationList = await prisma.conversation.findMany({
+  const messages = await prisma.message.findMany({
     where: {
       OR: [
         {
-          messages: {
-            some: {
-              sender: {
-                username: req.params.username,
-              },
-            },
-          },
+          senderId: currentUser.id,
         },
         {
-          messages: {
-            some: {
-              recipient: {
-                username: req.params.username,
-              },
-            },
-          },
+          recipientId: currentUser.id,
         },
       ],
     },
-    include: {
-      messages: {
-        include: {
-          recipient: {
-            select: {
-              username: true,
-            },
-          },
-          sender: {
-            select: {
-              username: true,
-            },
-          },
-        },
-      },
-    },
   });
-
-  const filteredList = cleanMessageArray(
-    conversationList,
-    'senderId',
-    'recipientId',
-  );
-
-  res.json(filteredList);
+  res.json(messages);
 });
 
 // Returns current user info needed to create a new message
