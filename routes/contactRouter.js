@@ -4,7 +4,7 @@ const contactController = require('../controllers/contactController');
 
 /*********** Contact Routing ***********/
 /***************************************/
-// GET contacts
+// GET all contacts
 contactRouter.get('/', contactController.contacts_get);
 
 // POST add contact

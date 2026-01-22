@@ -7,7 +7,7 @@ const adapter = new PrismaPg({
 });
 const prisma = new PrismaClient({ adapter });
 
-// GET global list of all contacts
+// GET global list of all contacts. Minimum info needed to add users and create messages
 exports.contacts_get = asyncHandler(async (req, res, next) => {
   const verifyList = await prisma.user.findMany({
     select: {
@@ -24,38 +24,6 @@ exports.contacts_get = asyncHandler(async (req, res, next) => {
     });
   } else {
     res.status(200).json(verifyList);
-  }
-});
-
-// GET current user contact list
-exports.user_contacts_get = asyncHandler(async (req, res, next) => {
-  const checkUser = await prisma.user.findUnique({
-    where: {
-      username: req.params.username,
-    },
-    include: {
-      contacts: {
-        include: {
-          contactUser: true,
-          user: true,
-        },
-      },
-    },
-  });
-
-  if (checkUser === null) {
-    res.status(200).json({
-      message: 'User not found',
-    });
-    return;
-  } else {
-    const contactList = checkUser.contacts.map((record) => ({
-      id: record.contactUserId,
-      firstname: record.contactUser.firstname,
-      lastname: record.contactUser.lastname,
-      username: record.contactUser.username,
-    }));
-    res.json(contactList);
   }
 });
 
@@ -147,5 +115,37 @@ exports.contact_delete = asyncHandler(async (req, res, next) => {
     res.status(200).json({
       message: `${removeContact.contactUser.username} DELETED`,
     });
+  }
+});
+
+// GET current user contact list
+exports.user_contacts_get = asyncHandler(async (req, res, next) => {
+  const checkUser = await prisma.user.findUnique({
+    where: {
+      username: req.params.username,
+    },
+    include: {
+      contacts: {
+        include: {
+          contactUser: true,
+          user: true,
+        },
+      },
+    },
+  });
+
+  if (checkUser === null) {
+    res.status(200).json({
+      message: 'User not found',
+    });
+    return;
+  } else {
+    const contactList = checkUser.contacts.map((record) => ({
+      id: record.contactUserId,
+      firstname: record.contactUser.firstname,
+      lastname: record.contactUser.lastname,
+      username: record.contactUser.username,
+    }));
+    res.json(contactList);
   }
 });
