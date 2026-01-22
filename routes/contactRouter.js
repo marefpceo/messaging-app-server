@@ -15,7 +15,7 @@ contactRouter.delete('/:username/delete', contactController.contact_delete);
 
 // GET Current User contact list
 contactRouter.get(
-  '/:username/contact_list',
+  '/:username/contact-list',
   contactController.user_contacts_get,
 );
 

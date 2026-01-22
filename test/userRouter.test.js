@@ -64,7 +64,7 @@ describe("Test user routes to access and edit user's profile", () => {
   // Test GET user profile
   test('GET user profile route works', async () => {
     const response = await request(app)
-      .get(`/user/${userId}/edit_profile`)
+      .get(`/user/${userId}/edit-profile`)
       .set('Accept', 'application/json');
     expect(response.body).toEqual({
       id: expect.any(Number),
@@ -83,7 +83,7 @@ describe("Test user routes to access and edit user's profile", () => {
   // Test PUT route to edit user profile
   test('PUT edit user profile route works', async () => {
     const response = await request(app)
-      .put(`/user/${userId}/edit_profile`)
+      .put(`/user/${userId}/edit-profile`)
       .set('Content-Type', 'application/json')
       .send({
         bio: 'User bio updated',
@@ -108,7 +108,7 @@ describe("Test user routes to access and edit user's profile", () => {
   // Test DELETE route to delete user profile
   test('DELETE user profile route works', async () => {
     const response = await request(app)
-      .delete(`/user/${userId}/edit_profile`)
+      .delete(`/user/${userId}/edit-profile`)
       .set('Content-Type', 'application/json');
     expect(response.body.message).toBe(
       `User ${testUser.firstname} ${testUser.lastname} marked for deletion`,
@@ -118,7 +118,7 @@ describe("Test user routes to access and edit user's profile", () => {
   // Test DELETE route with non-existent user
   test('DELETE user profile with non-existent user returns error', async () => {
     const response = await request(app)
-      .delete(`/user/${userId}/edit_profile`)
+      .delete(`/user/${userId}/edit-profile`)
       .set('Content-Type', 'application/json');
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('User not found');

@@ -72,7 +72,7 @@ describe('Test all contactRouter routes', () => {
   });
 
   test(`GET route to return all 'userOne1' contacts by username`, async () => {
-    const responseData = await agent.get('/contact/userOne1/contact_list');
+    const responseData = await agent.get('/contact/userOne1/contact-list');
     expect(responseData.status).toBe(200);
     responseData.body.forEach((item) => {
       expect(item).toEqual(
