@@ -26,6 +26,7 @@ describe('Test signup route to create a new user', () => {
         email: 'flname@test.com',
       },
     });
+    await prisma.session.deleteMany({});
   });
   // Test create new user
   test('POST signup route and create new user', async () => {

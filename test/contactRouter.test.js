@@ -21,6 +21,7 @@ app.use('/contact', contactRouter);
 describe('Test all contactRouter routes', () => {
   // Clears session data from database when complete
   afterAll(async () => {
+    await prisma.message.deleteMany({});
     await prisma.session.deleteMany({});
   });
 

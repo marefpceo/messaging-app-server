@@ -36,7 +36,7 @@ exports.messages_get = asyncHandler(async (req, res, next) => {
   res.json(messages);
 });
 
-// Returns current user info needed to create a new message
+// Returns a the current user's list of contacts. Users can only message contacts they have added
 exports.create_message_get = asyncHandler(async (req, res, next) => {
   const currentUser = await prisma.user.findUnique({
     where: {
@@ -58,14 +58,8 @@ exports.create_message_get = asyncHandler(async (req, res, next) => {
   res.json(currentUser.contacts);
 });
 
-// TODO removing conversation model. Update to reflect changes
-// Handles creating a new conversation and message
+// Handles creating a new message
 exports.create_message_post = [
-  body('subject')
-    .trim()
-    .isLength({ min: 3, max: 35 })
-    .withMessage('Subject line must be between 3 and 35 characters!')
-    .escape(),
   body('context')
     .trim()
     .isLength({ min: 8, max: 1000 })
@@ -77,131 +71,26 @@ exports.create_message_post = [
 
     if (!errors.isEmpty()) {
       res.status(200).json({
-        errors: errors.array(),
+        errors: errors.mapped(),
       });
       return;
     } else {
-      const newConversation = await prisma.conversation.create({
+      const createMessage = await prisma.message.create({
         data: {
-          subject: req.body.subject,
-          messages: {
-            create: [
-              {
-                senderId: parseInt(req.body.senderId),
-                recipientId: parseInt(req.body.recipientId),
-                context: req.body.context,
-              },
-            ],
-          },
-        },
-        include: {
-          messages: true,
+          senderId: parseInt(req.body.senderId),
+          recipientId: parseInt(req.body.recipientId),
+          context: req.body.context,
         },
       });
       res.json({
-        message: 'New conversation created!',
-        id: newConversation.id,
+        message: 'New message created!',
+        id: createMessage.id,
       });
     }
   }),
 ];
 
-// TODO removing conversation model. Update to reflect changes.
-// Handles creating new message by updating selected conversation
-exports.create_message_put = [
-  body('context')
-    .trim()
-    .isLength({ min: 8, max: 1000 })
-    .withMessage('Message must be between 8 and 1000 characters')
-    .escape(),
-
-  asyncHandler(async (req, res, next) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty) {
-      res.status(200).json({
-        errors: errors.array(),
-      });
-      return;
-    } else {
-      const newMessage = await prisma.conversation.update({
-        where: {
-          id: parseInt(req.body.conversationId),
-        },
-        data: {
-          messages: {
-            create: {
-              senderId: parseInt(req.body.senderId),
-              recipientId: parseInt(req.body.recipientId),
-              context: req.body.context,
-            },
-          },
-        },
-      });
-      res.json({
-        message: 'New message created',
-      });
-    }
-  }),
-];
-
-// TODO **********************************REMOVE**********************************
-// Removing Conversation model
-// Gets selected conversation and messages
-exports.conversation_get = asyncHandler(async (req, res, next) => {
-  const selectedConversation = await prisma.conversation.findUnique({
-    where: {
-      id: parseInt(req.params.conversationId),
-    },
-    include: {
-      messages: {
-        orderBy: {
-          createdAt: 'asc',
-        },
-        include: {
-          sender: {
-            select: {
-              username: true,
-            },
-          },
-          recipient: {
-            select: {
-              username: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
-  const filtered = cleanSelectedConversation(selectedConversation);
-
-  res.json(filtered);
-});
-
-// Gets selected message
-exports.message_get = asyncHandler(async (req, res, next) => {
-  const selectedMessage = await prisma.message.findUnique({
-    where: {
-      id: parseInt(req.params.messageId),
-    },
-    include: {
-      conversation: {
-        select: {
-          subject: true,
-        },
-      },
-      recipient: {
-        select: {
-          username: true,
-        },
-      },
-    },
-  });
-  res.json(selectedMessage);
-});
-
-// Handles deleted a message. Message is not deleted immediatly but instead marked for deletion
+// Handles deleted a message. Message is not deleted immediately but instead marked for deletion
 exports.message_delete = asyncHandler(async (req, res, next) => {
   const userId = parseInt(req.body.userId);
   const messageIdList = req.body.messageIdList.map(Number);
@@ -241,18 +130,5 @@ exports.message_delete = asyncHandler(async (req, res, next) => {
 
   res.json({
     message: `Messages moved to trash`,
-  });
-});
-
-// TODO **********************************REMOVE**********************************
-// Removing Conversation model
-exports.conversation_delete = asyncHandler(async (req, res, next) => {
-  const conversationToDelete = await prisma.conversation.delete({
-    where: {
-      id: parseInt(req.params.conversationId),
-    },
-  });
-  res.json({
-    message: `Conversation ${conversationToDelete.subject} deleted`,
   });
 });

@@ -19,6 +19,11 @@ app.use('/user', userRouter);
 
 // Test all user routes\
 describe("Test user routes to access and edit user's profile", () => {
+  afterAll(async () => {
+    await prisma.message.deleteMany({});
+    await prisma.session.deleteMany({});
+  });
+
   let userId;
   const testUser = {
     firstname: 'User',
@@ -57,7 +62,7 @@ describe("Test user routes to access and edit user's profile", () => {
   });
 
   // Test GET user profile
-  it('GET user profile route works', async () => {
+  test('GET user profile route works', async () => {
     const response = await request(app)
       .get(`/user/${userId}/edit_profile`)
       .set('Accept', 'application/json');
