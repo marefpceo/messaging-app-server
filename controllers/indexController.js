@@ -1,7 +1,13 @@
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
+
 const { PrismaClient } = require('../generated/prisma');
-const prisma = new PrismaClient();
+const { PrismaPg } = require('@prisma/adapter-pg');
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+const prisma = new PrismaClient({ adapter });
+
 const argon2 = require('argon2');
 
 // Handles creating new user signup
@@ -81,7 +87,7 @@ exports.signup_post = [
     if (!errors.isEmpty()) {
       res.status(400).json({
         formData,
-        errors: errors.array(),
+        errors: errors.mapped(),
       });
       return;
     } else {
@@ -125,7 +131,15 @@ exports.signup_post = [
           return next(err);
         } else {
           res.status(200).json({
-            message: 'Login successful',
+            id: newUser.id,
+            firstname: newUser.firstname,
+            lastname: newUser.lastname,
+            username: newUser.username,
+            date_of_birth: newUser.date_of_birth,
+            email: newUser.email,
+            password: newUser.password,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt,
           });
         }
       });

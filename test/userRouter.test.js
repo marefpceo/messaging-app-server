@@ -1,6 +1,13 @@
+require('dotenv').config();
+
 const userRouter = require('../routes/userRouter');
 const { PrismaClient } = require('../generated/prisma');
-const prisma = new PrismaClient();
+const { PrismaPg } = require('@prisma/adapter-pg');
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+const prisma = new PrismaClient({ adapter });
 
 const request = require('supertest');
 const express = require('express');
@@ -12,6 +19,11 @@ app.use('/user', userRouter);
 
 // Test all user routes\
 describe("Test user routes to access and edit user's profile", () => {
+  afterAll(async () => {
+    await prisma.message.deleteMany({});
+    await prisma.session.deleteMany({});
+  });
+
   let userId;
   const testUser = {
     firstname: 'User',
@@ -50,9 +62,9 @@ describe("Test user routes to access and edit user's profile", () => {
   });
 
   // Test GET user profile
-  it('GET user profile route works', async () => {
+  test('GET user profile route works', async () => {
     const response = await request(app)
-      .get(`/user/${userId}/edit_profile`)
+      .get(`/user/${userId}/edit-profile`)
       .set('Accept', 'application/json');
     expect(response.body).toEqual({
       id: expect.any(Number),
@@ -71,7 +83,7 @@ describe("Test user routes to access and edit user's profile", () => {
   // Test PUT route to edit user profile
   test('PUT edit user profile route works', async () => {
     const response = await request(app)
-      .put(`/user/${userId}/edit_profile`)
+      .put(`/user/${userId}/edit-profile`)
       .set('Content-Type', 'application/json')
       .send({
         bio: 'User bio updated',
@@ -96,7 +108,7 @@ describe("Test user routes to access and edit user's profile", () => {
   // Test DELETE route to delete user profile
   test('DELETE user profile route works', async () => {
     const response = await request(app)
-      .delete(`/user/${userId}/edit_profile`)
+      .delete(`/user/${userId}/edit-profile`)
       .set('Content-Type', 'application/json');
     expect(response.body.message).toBe(
       `User ${testUser.firstname} ${testUser.lastname} marked for deletion`,
@@ -106,7 +118,7 @@ describe("Test user routes to access and edit user's profile", () => {
   // Test DELETE route with non-existent user
   test('DELETE user profile with non-existent user returns error', async () => {
     const response = await request(app)
-      .delete(`/user/${userId}/edit_profile`)
+      .delete(`/user/${userId}/edit-profile`)
       .set('Content-Type', 'application/json');
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('User not found');
