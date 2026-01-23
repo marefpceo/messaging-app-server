@@ -1,5 +1,10 @@
 const { PrismaClient } = require('../generated/prisma');
-const prisma = new PrismaClient();
+const { PrismaPg } = require('@prisma/adapter-pg');
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+const prisma = new PrismaClient({ adapter });
+
 const argon2 = require('argon2');
 
 async function main() {

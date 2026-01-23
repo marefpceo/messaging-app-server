@@ -4,7 +4,7 @@ const contactController = require('../controllers/contactController');
 
 /*********** Contact Routing ***********/
 /***************************************/
-// GET contacts
+// GET all contacts
 contactRouter.get('/', contactController.contacts_get);
 
 // POST add contact
@@ -15,7 +15,7 @@ contactRouter.delete('/:username/delete', contactController.contact_delete);
 
 // GET Current User contact list
 contactRouter.get(
-  '/:username/contact_list',
+  '/:username/contact-list',
   contactController.user_contacts_get,
 );
 
