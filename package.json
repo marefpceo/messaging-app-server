@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "npx prisma generate",
-    "start": "npm postinstall node --trace-warnings ./bin/www",
+    "start": "node --trace-warnings ./bin/www",
     "debug-start": "DEBUG=server:* npm start",
     "serverstart": "nodemon npm run debug-start",
     "prepare": "husky",
