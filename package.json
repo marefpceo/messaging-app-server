@@ -8,7 +8,8 @@
     "serverstart": "nodemon npm run debug-start",
     "prepare": "husky",
     "test": "jest test/ --verbose --watch --detectOpenHandles",
-    "dbseed": "npx prisma db seed"
+    "dbseed": "npx prisma db seed",
+    "postinstall": "npx prisma generate"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
