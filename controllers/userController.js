@@ -10,6 +10,7 @@ const prisma = new PrismaClient({ adapter });
 
 const { convertEscape } = require('../helpers/convertEscape');
 
+// Returns user profile settings for the current user
 exports.edit_profile_get = asyncHandler(async (req, res, next) => {
   const userProfile = await prisma.user.findUnique({
     where: {
@@ -37,6 +38,7 @@ exports.edit_profile_get = asyncHandler(async (req, res, next) => {
   });
 });
 
+// Handles updating user settings
 exports.edit_profile_put = [
   body('bio').trim().isLength({ max: 520 }).escape(),
 
@@ -111,6 +113,7 @@ exports.edit_profile_put = [
   }),
 ];
 
+// Deletes user profile (ADMIN Function)
 exports.edit_profile_delete = asyncHandler(async (req, res, next) => {
   const findUser = await prisma.user.findFirst({
     where: {

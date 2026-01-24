@@ -147,6 +147,7 @@ exports.signup_post = [
   }),
 ];
 
+// Handles user login with valid credentials
 exports.login_post = [
   body('email').trim().isEmail().escape(),
   body('password').trim().isLength({ min: 9 }).escape(),
