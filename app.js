@@ -53,7 +53,7 @@ app.use(
           /http:\/\/localhost:5173/,
           /http:\/\/localhost:4173/,
           /.*\.railway.app.*/,
-          /.*\.messaging-app-frontend-7ib.pages\.dev.*/,
+          /.*messaging-app-frontend-7ib.pages\.dev.*/,
         ],
       },
     },
